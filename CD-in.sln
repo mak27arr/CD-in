@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CD-in", "CD-in\CD-in.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CD-in-Core", "CD-in-Core\CD-in-Core.csproj", "{001681BA-F0E5-446D-871A-2EC09B3A578B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CD-Test", "CD-Test\CD-Test.csproj", "{09270979-D70A-4BFA-ADAA-46EB867E5918}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{001681BA-F0E5-446D-871A-2EC09B3A578B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{001681BA-F0E5-446D-871A-2EC09B3A578B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{001681BA-F0E5-446D-871A-2EC09B3A578B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09270979-D70A-4BFA-ADAA-46EB867E5918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09270979-D70A-4BFA-ADAA-46EB867E5918}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09270979-D70A-4BFA-ADAA-46EB867E5918}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09270979-D70A-4BFA-ADAA-46EB867E5918}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

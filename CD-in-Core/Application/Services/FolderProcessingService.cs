@@ -15,10 +15,10 @@ namespace CD_in_Core.Application.Services
             _mainProcessingService = mainProcessingService;
         }
 
-        public async Task ProcessFolderAsync(string? folderPath, int blockSize, CancellationToken cancellationToken)
+        public async Task ProcessFolderAsync(string? folderPath, int blockSize, Action<double> progressCallback, CancellationToken cancellationToken)
         {
             var processingOption = BuildProcessingOption(folderPath, blockSize);
-            await _mainProcessingService.ProccessFiles(processingOption, cancellationToken);
+            await _mainProcessingService.ProccessFiles(processingOption, progressCallback, cancellationToken);
         }
 
         private ProcessingOption BuildProcessingOption(string? folderPath, int blockSize)

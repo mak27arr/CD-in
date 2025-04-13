@@ -3,7 +3,6 @@ using CD_in_Core.Domain.Models;
 using CD_in_Core.Domain.Models.Replacement;
 using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Infrastructure.FileServices;
-using System.Threading;
 
 namespace CD_in_Core.Application.Services
 {
@@ -28,14 +27,23 @@ namespace CD_in_Core.Application.Services
             _sequenceWriter = sequenceWriter;
         }
 
-        public async Task ProccessFiles(ProcessingOption option, CancellationToken token)
+        public async Task ProccessFiles(ProcessingOption option, Action<double> progressCallback, CancellationToken token)
         {
+            if (option == null)
+                return;
+
+            if (string.IsNullOrWhiteSpace(option.FolderPath))
+                throw new ArgumentException("Please set FolderPath");
+
+            if (string.IsNullOrWhiteSpace(option.InputFilesType))
+                throw new ArgumentException("Please set InputFilesType");
+
             var inputFilePaths = Directory.GetFiles(option.FolderPath, option.InputFilesType);
 
             foreach(var filePath in inputFilePaths)
             {
                 var fileName = Path.GetFileNameWithoutExtension(filePath);
-                var deltaResult = _fileReader.ProcessFile(filePath, option.DeltaParam, token);
+                var deltaResult = _fileReader.ProcessFile(filePath, option.DeltaParam, progressCallback, token);
                 var sequence = new Sequence();
 
                 await foreach(var element in deltaResult)

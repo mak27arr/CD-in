@@ -9,7 +9,8 @@ namespace CD_in_Core.Infrastructure.Extension
         {
             service.AddTransient<ISequenceWriter, SequenceWriter>();
             service.AddTransient<IFileReader, FileReader>();
-
+            service.AddTransient<ILineCountEstimator, BinaryLineCountEstimator>();
+            service.AddTransient<IFileReadProgressTracker, FileReadProgressTracker>();
             return service;
         }
     }

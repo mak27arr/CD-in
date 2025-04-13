@@ -10,6 +10,10 @@ namespace CD_in
     {
         #region variables
 
+        private FolderProcessingService _folderProcessingService;
+        private CancellationTokenSource? tokenSource;
+        private bool _isExecuting;
+        private double _progress;
         private string _blockSize = "100000";
         private bool _isStatisticsChecked;
         private bool _isWithoutCdOutChecked;
@@ -68,6 +72,16 @@ namespace CD_in
             }
         }
 
+        public double Progress
+        {
+            get => _progress;
+            set
+            {
+                _progress = value;
+                OnPropertyChanged(nameof(Progress));
+            }
+        }
+
         #region ICommand
 
         public ICommand ExecuteCommand { get; }
@@ -75,10 +89,6 @@ namespace CD_in
         public ICommand CDInCommand { get; set; }
 
         #endregion
-
-        private FolderProcessingService _folderProcessingService;
-        private CancellationTokenSource? tokenSource;
-        private bool _isExecuting;
 
         public MainViewModel(FolderProcessingService folderProcessingService)
         {
@@ -94,8 +104,10 @@ namespace CD_in
         {
             IsExecuting = true;
             tokenSource = new CancellationTokenSource();
+            UpdateProgress(0);
+
             if (int.TryParse(BlockSize, out var blockSize))
-                await _folderProcessingService.ProcessFolderAsync(CDInFolderPath, blockSize, tokenSource.Token);
+                await _folderProcessingService.ProcessFolderAsync(CDInFolderPath, blockSize, UpdateProgress, tokenSource.Token);
 
             IsExecuting = false;
         }
@@ -121,6 +133,11 @@ namespace CD_in
         }
 
         #endregion
+
+        private void UpdateProgress(double progress)
+        {
+            Progress = progress;
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

@@ -5,6 +5,6 @@ namespace CD_in_Core.Application.Services.Interfaces
 {
     public interface IDeltaIndexProcessorService
     {
-        IAsyncEnumerable<Element> ProcessFile(string filePath, DeltaIndexParams parameters, CancellationToken cancellationToken = default);
+        IAsyncEnumerable<Element> ProcessFile(string filePath, DeltaIndexParams parameters, Action<double> progressCallback,CancellationToken cancellationToken = default);
     }
 }
