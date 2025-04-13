@@ -1,9 +1,10 @@
-﻿using CD_in_Core.Domain.Models;
+﻿using CD_in_Core.Domain.Models.DeltaIndex;
+using CD_in_Core.Domain.Models.Sequences;
 
 namespace CD_in_Core.Application.Services.Interfaces
 {
     public interface IDeltaIndexProcessorService
     {
-        Task<DeltaIndexResult> ProcessFile(string filePath, DeltaIndexParams parameters, CancellationToken cancellationToken = default);
+        IAsyncEnumerable<Element> ProcessFile(string filePath, DeltaIndexParams parameters, CancellationToken cancellationToken = default);
     }
 }

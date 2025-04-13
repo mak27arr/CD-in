@@ -1,6 +1,6 @@
-﻿namespace CD_in_Core.Domain.Models
+﻿namespace CD_in_Core.Domain.Models.Sequences
 {
-    public class SequenceExtractionOptions
+    public class SequenceExtractionOptions : IOptions
     {
         public int TargetDigit { get; set; }
 

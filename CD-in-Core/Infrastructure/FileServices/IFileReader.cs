@@ -2,6 +2,6 @@
 {
     public interface IFileReader
     {
-        IAsyncEnumerable<List<int>> ReadDigitsInBlocksAsync(string filePath, int blockSize, CancellationToken cancellationToken = default);
+        IAsyncEnumerable<List<byte>> ReadDigitsInBlocksAsync(string filePath, int blockSize, CancellationToken cancellationToken = default);
     }
 }

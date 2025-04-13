@@ -6,7 +6,7 @@ namespace CD_in_Core.Infrastructure.FileServices
 {
     public class FileReader : IFileReader
     {
-        public async IAsyncEnumerable<List<int>> ReadDigitsInBlocksAsync(
+        public async IAsyncEnumerable<List<byte>> ReadDigitsInBlocksAsync(
             string filePath,
             int blockSize,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -14,7 +14,7 @@ namespace CD_in_Core.Infrastructure.FileServices
             using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true);
             using var reader = new StreamReader(stream);
 
-            var block = new List<int>(blockSize);
+            var block = new List<byte>(blockSize);
 
             while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested)
             {
@@ -23,14 +23,14 @@ namespace CD_in_Core.Infrastructure.FileServices
                 if (string.IsNullOrWhiteSpace(line))
                     throw new ArgumentException("File contain empty string");
 
-                if (int.TryParse(line, CultureInfo.InvariantCulture, out var number))
+                if (byte.TryParse(line, CultureInfo.InvariantCulture, out var number))
                     block.Add(number);
                 else
                     throw new ArgumentException($"File contains illegal character: {line}");
 
                 if (block.Count >= blockSize)
                 {
-                    yield return new List<int>(block);
+                    yield return new List<byte>(block);
                     block.Clear();
                 }
             }

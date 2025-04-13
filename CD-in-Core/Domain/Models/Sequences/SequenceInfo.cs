@@ -1,4 +1,4 @@
-﻿namespace CD_in_Core.Domain.Models
+﻿namespace CD_in_Core.Domain.Models.Sequences
 {
     public class SequenceInfo
     {

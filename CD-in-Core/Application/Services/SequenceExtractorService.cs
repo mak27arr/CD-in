@@ -1,75 +1,42 @@
 ﻿using CD_in_Core.Application.Services.Interfaces;
-using CD_in_Core.Domain.Models;
+using CD_in_Core.Domain.Models.Sequences;
 
 namespace CD_in_Core.Application.Services
 {
-    public class SequenceExtractorService : ISequenceExtractorService
+    internal class SequenceExtractorService : ISequenceExtractorService
     {
-        private readonly SequenceExtractionOptions _options;
-        private readonly LinkedList<SequenceInfo> _sequences = new();
-
-        private int _currentIndex = 0;
-        private int _currentSequenceStart = -1;
-        private int _currentSequenceLength = 0;
-
-        public SequenceExtractorService(SequenceExtractionOptions options)
+        public Sequence ExstractSequence(Sequence sequence, SequenceExtractionOptions options)
         {
-            _options = options;
-        }
+            var resultSequence = new Sequence();
+            var currentSequence = new Dictionary<int, int>(); 
 
-        public void ProcessBlock(IEnumerable<int> digits, int globalOffset)
-        {
-            var list = digits.ToList();
-
-            for (int i = 0; i < list.Count; i++)
+            foreach(var element in sequence.Digits)
             {
-                var value = list[i];
-                var absoluteIndex = globalOffset + i;
-
-                if (value == _options.TargetDigit)
+                if (element.Value == options.TargetDigit)
                 {
-                    if (_currentSequenceLength == 0)
-                        _currentSequenceStart = absoluteIndex;
-
-                    _currentSequenceLength++;
+                    currentSequence.Add(element.Key, element.Value);
                 }
                 else
                 {
-                    FinalizeSequence();
+                    if (currentSequence.Count >= options.MinSequenceLength)
+                    {
+                        foreach (var kvp in currentSequence)
+                        {
+                            resultSequence.Digits[kvp.Key] = kvp.Value;
+                        }
+                    }
+
+                    currentSequence.Clear();
                 }
             }
-        }
 
-        public SequenceExtractionResult GetResult()
-        {
-            FinalizeSequence();
-
-            return new SequenceExtractionResult
+            if (currentSequence.Count >= options.MinSequenceLength)
             {
-                Sequences = _sequences.ToList()
-            };
-        }
-
-        public void Reset()
-        {
-            _sequences.Clear();
-            _currentSequenceStart = -1;
-            _currentSequenceLength = 0;
-        }
-
-        private void FinalizeSequence()
-        {
-            if (_currentSequenceLength >= _options.MinSequenceLength)
-            {
-                _sequences.AddLast(new SequenceInfo
-                {
-                    StartIndex = _currentSequenceStart,
-                    Count = _currentSequenceLength
-                });
+                foreach (var kvp in currentSequence)
+                    resultSequence.Add(kvp.Key, kvp.Value);
             }
 
-            _currentSequenceStart = -1;
-            _currentSequenceLength = 0;
+            return resultSequence;
         }
     }
 }

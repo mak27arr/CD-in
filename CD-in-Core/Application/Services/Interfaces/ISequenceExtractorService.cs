@@ -1,11 +1,9 @@
-﻿using CD_in_Core.Domain.Models;
+﻿using CD_in_Core.Domain.Models.Sequences;
 
 namespace CD_in_Core.Application.Services.Interfaces
 {
     public interface ISequenceExtractorService
     {
-        void ProcessBlock(IEnumerable<int> digits, int globalOffset);
-        SequenceExtractionResult GetResult();
-        void Reset();
+        Sequence ExstractSequence(Sequence sequence, SequenceExtractionOptions options);
     }
 }
