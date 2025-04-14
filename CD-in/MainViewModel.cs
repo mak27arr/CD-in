@@ -1,8 +1,7 @@
 ﻿using CD_in_Core.Application.Services.Interfaces;
-using GalaSoft.MvvmLight.Command;
+using CommunityToolkit.Mvvm.Input;
 using System.ComponentModel;
 using System.IO;
-using System.Windows.Input;
 
 namespace CD_in
 {
@@ -58,7 +57,7 @@ namespace CD_in
             {
                 _inFolderPath = value;
                 OnPropertyChanged();
-                CommandManager.InvalidateRequerySuggested();
+                ProcessFolderCommand.NotifyCanExecuteChanged();
             }
         }
 
@@ -82,18 +81,20 @@ namespace CD_in
             }
         }
 
+        private bool CanProcessFolder => !IsExecuting && !string.IsNullOrWhiteSpace(CDInFolderPath) && Directory.Exists(CDInFolderPath);
+
         #region ICommand
 
-        public ICommand ExecuteCommand { get; }
-        public ICommand CancelCommand { get; }
-        public ICommand CDInCommand { get; set; }
+        public RelayCommand ProcessFolderCommand { get; }
+        public RelayCommand CancelCommand { get; }
+        public RelayCommand CDInCommand { get; set; }
 
         #endregion
 
         public MainViewModel(IFolderProcessingService folderProcessingService)
         {
             _folderProcessingService = folderProcessingService;
-            ExecuteCommand = new RelayCommand(async () => await ExecuteAsync(), CanExecute);
+            ProcessFolderCommand = new RelayCommand(async () => await ExecuteAsync(), () => CanProcessFolder);
             CancelCommand = new RelayCommand(Cancel);
             CDInCommand = new RelayCommand(OnCDInButtonClicked);
         }
@@ -112,11 +113,6 @@ namespace CD_in
             IsExecuting = false;
         }
 
-        private bool CanExecute()
-        {
-            return !IsExecuting && !string.IsNullOrWhiteSpace(CDInFolderPath) && Directory.Exists(CDInFolderPath);
-        }
-
         private void Cancel()
         {
             tokenSource?.Cancel();
@@ -129,7 +125,9 @@ namespace CD_in
             dialog.Title = "Select a folder";
 
             if (dialog.ShowDialog() == true)
+            {
                 CDInFolderPath = dialog.FolderName;
+            }
         }
 
         #endregion

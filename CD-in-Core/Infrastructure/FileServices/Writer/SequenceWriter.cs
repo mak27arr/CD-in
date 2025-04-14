@@ -14,11 +14,13 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
         private readonly CancellationTokenSource _cts = new();
         private readonly ILogger<SequenceWriter> _logger;
         private readonly int _maxSequenceInMemory;
+        private readonly int _stringBufferSize;
 
         public SequenceWriter(IConfiguration configuration, ILogger<SequenceWriter> logger)
         {
             _logger = logger;
             _maxSequenceInMemory = configuration.GetValue<int>("SequenceWriterSettings:MaxSequenceInMemory", 3);
+            _stringBufferSize = configuration.GetValue<int>("SequenceWriterSettings:DiskBufferSize", 4096);
 
             _channel = Channel.CreateBounded<WriteRequest>(new BoundedChannelOptions(_maxSequenceInMemory)
             {
@@ -62,8 +64,8 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
             await using var stream = new FileStream(fullName, FileMode.Append, FileAccess.Write, FileShare.None, 8192, useAsync: true);
             await using var writer = new StreamWriter(stream);
 
-            var sb = new StringBuilder(capacity: 4096);
-            int batchSize = sb.Capacity / 2;
+            var contentBuffer = new StringBuilder(capacity: _stringBufferSize);
+            int batchSize = contentBuffer.Capacity / 2;
             int counter = 0;
 
             foreach (var digit in sequence.Digits)
@@ -71,20 +73,20 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
                 if (cancellationToken.IsCancellationRequested)
                     break;
 
-                sb.AppendLine($"{digit.Key}:{digit.Value}");
+                contentBuffer.AppendLine($"{digit.Key}:{digit.Value}");
                 counter++;
 
                 if (counter >= batchSize)
                 {
-                    await writer.WriteAsync(sb.ToString());
-                    sb.Clear();
+                    await writer.WriteAsync(contentBuffer.ToString());
+                    contentBuffer.Clear();
                     counter = 0;
                 }
             }
 
-            if (sb.Length > 0)
+            if (contentBuffer.Length > 0)
             {
-                await writer.WriteAsync(sb.ToString());
+                await writer.WriteAsync(contentBuffer.ToString());
             }
         }
 
