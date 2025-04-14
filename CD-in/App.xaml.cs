@@ -14,7 +14,7 @@ namespace CD_in;
 /// </summary>
 public partial class App : Application
 {
-    public static IServiceProvider ServiceProvider { get; private set; }
+    public static IServiceProvider? ServiceProvider { get; private set; }
 
     public App()
     {
@@ -48,8 +48,8 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-        mainWindow.Show();
+        var mainWindow = ServiceProvider?.GetRequiredService<MainWindow>();
+        mainWindow?.Show();
     }
 }
 

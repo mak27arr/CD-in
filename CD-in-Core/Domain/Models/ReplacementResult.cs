@@ -4,9 +4,8 @@ namespace CD_in_Core.Domain.Models
 {
     public class ReplacementResult : Sequence
     {
-        internal ReplacementResult(int size = 1)
+        internal ReplacementResult(int size = 1) : base(size)
         {
-            Digits = new Dictionary<int, int>(size);
         }
     }
 }

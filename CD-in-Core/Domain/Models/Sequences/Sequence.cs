@@ -2,7 +2,7 @@
 {
     public class Sequence
     {
-        public Dictionary<int, int> Digits { get; internal set; }
+        public Dictionary<int, int> Digits { get; private set; }
 
         public int Count => Digits?.Count ?? 0;
 

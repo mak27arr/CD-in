@@ -14,14 +14,14 @@ namespace CD_in_Core.Application.Services
         private readonly IDeltaIndexProcessorService _fileReader;
         private readonly ILargeNumberExtractionService _largeNumberExtractionService;
         private readonly IBeneficialReplacementService _beneficialReplacementService;
-        private readonly ISequenceExtractorService _sequenceExtractorService;
+        private readonly ISubSequenceExtractorService _sequenceExtractorService;
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<MainProcessingService> _logger;
 
         public MainProcessingService(IDeltaIndexProcessorService fileReader,
             ILargeNumberExtractionService largeNumberExtractionService,
             IBeneficialReplacementService beneficialReplacementService,
-            ISequenceExtractorService sequenceExtractorService,
+            ISubSequenceExtractorService sequenceExtractorService,
             IServiceProvider serviceProvider,
             ILogger<MainProcessingService> logger)
         {
@@ -116,7 +116,7 @@ namespace CD_in_Core.Application.Services
                     return _largeNumberExtractionService.ExtractLargeNumbers(sequence, extractionOptions);
                 case ValueTransformationOptions valueTransformationOptions:
                     return _beneficialReplacementService.PerformBeneficialReplacement(sequence, valueTransformationOptions);
-                case SequenceExtractionOptions extractionOptions:
+                case SubSequenceExtractionOptions extractionOptions:
                     return _sequenceExtractorService.ExstractSequence(sequence, extractionOptions);
                 default:
                     throw new NotImplementedException(extractionOption.GetType().Name);

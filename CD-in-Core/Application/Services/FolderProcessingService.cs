@@ -37,9 +37,9 @@ namespace CD_in_Core.Application.Services
                 {
                     new ExtractionOptions()
                     {
-                        SelectOption = new SequenceExtractionOptions()
+                        SelectOption = new SubSequenceExtractionOptions()
                         {
-                            TargetDigit = 1,
+                            Condition = new EqualsCondition(1),
                             MinSequenceLength = 11
                         },
                         SaveOptions = new SequenceSaveOptions()
@@ -50,9 +50,9 @@ namespace CD_in_Core.Application.Services
                     },
                     new ExtractionOptions()
                     {
-                        SelectOption = new SequenceExtractionOptions()
+                        SelectOption = new SubSequenceExtractionOptions()
                         {
-                            TargetDigit = 2,
+                            Condition = new EqualsCondition(2),
                             MinSequenceLength = 6
                         },
                         SaveOptions = new SequenceSaveOptions()

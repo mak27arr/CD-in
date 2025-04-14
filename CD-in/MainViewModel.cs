@@ -68,6 +68,7 @@ namespace CD_in
             {
                 _isExecuting = value;
                 OnPropertyChanged(nameof(IsExecuting));
+                ProcessFolderCommand.NotifyCanExecuteChanged();
             }
         }
 

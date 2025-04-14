@@ -8,6 +8,11 @@ namespace CD_in_Core.Domain.Models.Replacement
         private Sequence? _sequence;
         private int _searchValue = 2;
 
+        public void SetSequence(Sequence sequence)
+        {
+            _sequence = sequence;
+        }
+
         public bool IsSatisfiedBy(KeyValuePair<int, int> item)
         {
             if (_sequence == null)
@@ -21,11 +26,6 @@ namespace CD_in_Core.Domain.Models.Replacement
         {
             return (!_sequence.Digits.TryGetValue(index - 1, out var left) || left != _searchValue)
                 && (!_sequence.Digits.TryGetValue(index + 1, out var right) || right != _searchValue);
-        }
-
-        public void SetSequence(Sequence sequence)
-        {
-            _sequence = sequence;
         }
     }
 }

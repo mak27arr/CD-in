@@ -18,7 +18,7 @@ public class SequenceWriterTests
 
         _mockLogger = new Mock<ILogger<SequenceWriter>>();
 
-        var inMemorySettings = new Dictionary<string, string>
+        var inMemorySettings = new Dictionary<string, string?>
         {
             { "SequenceWriterSettings:MaxSequenceInMemory", "3" } // Ти можеш додавати інші ключі за потреби
         };
@@ -36,17 +36,20 @@ public class SequenceWriterTests
         // Arrange
         var cancellationToken = new CancellationToken();
 
-        var request1 = new WriteRequest
+        var request = new WriteRequest
         {
-            Sequence = new Sequence { Digits = new Dictionary<int, int> { { 1, 10 }, { 2, 20 } } },
+            Sequence = new Sequence(2),
             SourceFileName = "file1.txt",
             Options = new SequenceSaveOptions { FilePath = "C:\\temp", FileName = "output" }
         };
 
+        request.Sequence.Add(1, 10);
+        request.Sequence.Add(2, 20);
+
         // Act
         var startTime = DateTime.Now;
-        await _sequenceWriter.AppendSequenceAsync(request1, cancellationToken);
-        await _sequenceWriter.AppendSequenceAsync(request1, cancellationToken);
+        await _sequenceWriter.AppendSequenceAsync(request, cancellationToken);
+        await _sequenceWriter.AppendSequenceAsync(request, cancellationToken);
         var endTimeAfterSecondRequest = DateTime.Now;
 
         var firstRequestDuration = endTimeAfterSecondRequest - startTime;
@@ -64,7 +67,7 @@ public class SequenceWriterTests
         // Create a WriteRequest with some sequence data
         var request = new WriteRequest
         {
-            Sequence = new Sequence { Digits = new Dictionary<int, int> { { 1, 0 }, { 2, 1 } } },
+            Sequence = new Sequence(2),
             SourceFileName = "file1",
             Options = new SequenceSaveOptions
             {
@@ -72,6 +75,8 @@ public class SequenceWriterTests
                 FileName = "output"
             }
         };
+        request.Sequence.Add(1, 0);
+        request.Sequence.Add(2, 1);
 
         // Act
         await _sequenceWriter.AppendSequenceAsync(request, cancellationToken);
