@@ -1,4 +1,5 @@
-﻿using CD_in_Core.Domain.Models;
+﻿using CD_in_Core.Application.Services.Interfaces;
+using CD_in_Core.Domain.Models;
 using CD_in_Core.Domain.Models.DeltaIndex;
 using CD_in_Core.Domain.Models.Replacement;
 using CD_in_Core.Domain.Models.Sequences;
@@ -6,11 +7,11 @@ using CD_in_Core.Domain.Models.Spec;
 
 namespace CD_in_Core.Application.Services
 {
-    public class FolderProcessingService
+    internal class FolderProcessingService : IFolderProcessingService
     {
-        private readonly MainProcessingService _mainProcessingService;
+        private readonly IMainProcessingService _mainProcessingService;
 
-        public FolderProcessingService(MainProcessingService mainProcessingService)
+        public FolderProcessingService(IMainProcessingService mainProcessingService)
         {
             _mainProcessingService = mainProcessingService;
         }
@@ -18,7 +19,7 @@ namespace CD_in_Core.Application.Services
         public async Task ProcessFolderAsync(string? folderPath, int blockSize, Action<double> progressCallback, CancellationToken cancellationToken)
         {
             var processingOption = BuildProcessingOption(folderPath, blockSize);
-            await _mainProcessingService.ProccessFiles(processingOption, progressCallback, cancellationToken);
+            await _mainProcessingService.ProcessFiles(processingOption, progressCallback, cancellationToken);
         }
 
         private ProcessingOption BuildProcessingOption(string? folderPath, int blockSize)

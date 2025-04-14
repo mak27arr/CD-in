@@ -2,32 +2,38 @@
 using CD_in_Core.Domain.Models;
 using CD_in_Core.Domain.Models.Replacement;
 using CD_in_Core.Domain.Models.Sequences;
-using CD_in_Core.Infrastructure.FileServices;
+using CD_in_Core.Infrastructure.FileServices.Interfaces;
+using CD_in_Core.Infrastructure.FileServices.Writer;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CD_in_Core.Application.Services
 {
-    public class MainProcessingService
+    internal class MainProcessingService : IMainProcessingService
     {
-        private IDeltaIndexProcessorService _fileReader;
-        private ILargeNumberExtractionService _largeNumberExtractionService;
-        private IBeneficialReplacementService _beneficialReplacementService;
-        private ISequenceExtractorService _sequenceExtractorService;
-        private ISequenceWriter _sequenceWriter;
+        private readonly IDeltaIndexProcessorService _fileReader;
+        private readonly ILargeNumberExtractionService _largeNumberExtractionService;
+        private readonly IBeneficialReplacementService _beneficialReplacementService;
+        private readonly ISequenceExtractorService _sequenceExtractorService;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ILogger<MainProcessingService> _logger;
 
-        public MainProcessingService(IDeltaIndexProcessorService fileReader, 
+        public MainProcessingService(IDeltaIndexProcessorService fileReader,
             ILargeNumberExtractionService largeNumberExtractionService,
             IBeneficialReplacementService beneficialReplacementService,
             ISequenceExtractorService sequenceExtractorService,
-            ISequenceWriter sequenceWriter)
+            IServiceProvider serviceProvider,
+            ILogger<MainProcessingService> logger)
         {
             _fileReader = fileReader;
             _largeNumberExtractionService = largeNumberExtractionService;
             _beneficialReplacementService = beneficialReplacementService;
             _sequenceExtractorService = sequenceExtractorService;
-            _sequenceWriter = sequenceWriter;
+            _serviceProvider = serviceProvider;
+            _logger = logger;
         }
 
-        public async Task ProccessFiles(ProcessingOption option, Action<double> progressCallback, CancellationToken token)
+        public async Task ProcessFiles(ProcessingOption option, Action<double> progressCallback, CancellationToken token)
         {
             if (option == null)
                 return;
@@ -39,44 +45,68 @@ namespace CD_in_Core.Application.Services
                 throw new ArgumentException("Please set InputFilesType");
 
             var inputFilePaths = Directory.GetFiles(option.FolderPath, option.InputFilesType);
+            var fileCount = inputFilePaths.Count();
+            var sequenceWriter = _serviceProvider.GetRequiredService<ISequenceWriter>();
 
-            foreach(var filePath in inputFilePaths)
+            foreach (var filePath in inputFilePaths)
             {
+                _logger.LogInformation("Start process file: {0}", filePath);
                 var fileName = Path.GetFileNameWithoutExtension(filePath);
-                var deltaResult = _fileReader.ProcessFile(filePath, option.DeltaParam, progressCallback, token);
+                var deltaResult = _fileReader.ProcessFile(filePath, option.DeltaParam, (progress) => UpdateProgress(progress, fileCount, progressCallback), token);
                 var sequence = new Sequence();
 
-                await foreach(var element in deltaResult)
+                await foreach (var element in deltaResult)
                 {
+                    if (token.IsCancellationRequested)
+                        return;
+
                     sequence.Add(element.Index, element.Value);
 
                     if (sequence.Digits.Count == option.DeltaParam.BlockSize)
                     {
-                        foreach (var extractionOption in option.ExtractionOptions)
-                        {
-                            var result = ProccesSequenceForOption(sequence, extractionOption.SelectOption);
-                            await SaveResult(result, fileName, extractionOption.SaveOptions);
-                        }
-
+                        await ProccesInputSequence(option, sequenceWriter, fileName, sequence, token);
                         sequence.Clear();
                     }
                 }
 
-                if (sequence.Digits.Count > 0)
+                if (!token.IsCancellationRequested && sequence.Digits.Count > 0)
                 {
-                    foreach (var extractionOption in option.ExtractionOptions)
-                    {
-                        var result = ProccesSequenceForOption(sequence, extractionOption.SelectOption);
-                        await SaveResult(result, fileName, extractionOption.SaveOptions);
-                    }
+                    await ProccesInputSequence(option, sequenceWriter, fileName, sequence, token);
                 }
+
+                _logger.LogInformation("Finish process file: {0}", filePath);
+            }
+
+            sequenceWriter.Complete();
+            await sequenceWriter.WaitToFinishAsync();
+        }
+
+        private async Task ProccesInputSequence(ProcessingOption option, ISequenceWriter sequenceWriter, string fileName, Sequence sequence, CancellationToken token)
+        {
+            foreach (var extractionOption in option.ExtractionOptions)
+            {
+                var result = ProccesSequenceForOption(sequence, extractionOption.SelectOption);
+                await SaveResult(sequenceWriter, result, fileName, extractionOption.SaveOptions, token);
             }
         }
 
-        private async Task SaveResult(Sequence sequence, string sourceName, SequenceSaveOptions saveOptions)
+        private void UpdateProgress(double progress, int fileCount, Action<double> progressCallback)
         {
-           if (saveOptions != null)
-                await _sequenceWriter.AppendSequenceAsync(sequence, sourceName, saveOptions);
+            progressCallback?.Invoke(progress / fileCount);
+        }
+
+        private async Task SaveResult(ISequenceWriter sequenceWriter, Sequence sequence, string sourceName, SequenceSaveOptions saveOptions, CancellationToken token)
+        {
+            if (saveOptions != null)
+            {
+                var requwest = new WriteRequest()
+                {
+                    Sequence = sequence,
+                    SourceFileName = sourceName,
+                    Options = saveOptions
+                };
+                await sequenceWriter.AppendSequenceAsync(requwest, token);
+            }
         }
 
         private Sequence ProccesSequenceForOption(Sequence sequence, IOptions extractionOption)
@@ -91,7 +121,7 @@ namespace CD_in_Core.Application.Services
                     return _sequenceExtractorService.ExstractSequence(sequence, extractionOptions);
                 default:
                     throw new NotImplementedException(extractionOption.GetType().Name);
-            }    
+            }
         }
     }
 }

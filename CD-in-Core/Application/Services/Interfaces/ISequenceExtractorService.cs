@@ -2,7 +2,7 @@
 
 namespace CD_in_Core.Application.Services.Interfaces
 {
-    public interface ISequenceExtractorService
+    internal interface ISequenceExtractorService
     {
         Sequence ExstractSequence(Sequence sequence, SequenceExtractionOptions options);
     }

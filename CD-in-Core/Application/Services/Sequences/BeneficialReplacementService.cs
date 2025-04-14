@@ -3,13 +3,13 @@ using CD_in_Core.Domain.Models;
 using CD_in_Core.Domain.Models.Replacement;
 using CD_in_Core.Domain.Models.Sequences;
 
-namespace CD_in_Core.Application.Services
+namespace CD_in_Core.Application.Services.Sequences
 {
     internal class BeneficialReplacementService : IBeneficialReplacementService
     {
         public ReplacementResult PerformBeneficialReplacement(Sequence sequence, ValueTransformationOptions options)
         {
-            var modified = new ReplacementResult();
+            var modified = new ReplacementResult(sequence.Count);
 
             options.Specification.SetSequence(sequence);
 

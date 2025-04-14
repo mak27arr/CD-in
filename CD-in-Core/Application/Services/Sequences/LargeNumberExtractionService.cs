@@ -2,7 +2,7 @@
 using CD_in_Core.Domain.Models;
 using CD_in_Core.Domain.Models.Sequences;
 
-namespace CD_in_Core.Application.Services
+namespace CD_in_Core.Application.Services.Sequences
 {
     internal class LargeNumberExtractionService : ILargeNumberExtractionService
     {

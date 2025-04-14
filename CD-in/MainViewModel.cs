@@ -1,5 +1,5 @@
-﻿using CD_in_Core.Application.Services;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using CD_in_Core.Application.Services.Interfaces;
+using GalaSoft.MvvmLight.Command;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Input;
@@ -10,7 +10,7 @@ namespace CD_in
     {
         #region variables
 
-        private FolderProcessingService _folderProcessingService;
+        private IFolderProcessingService _folderProcessingService;
         private CancellationTokenSource? tokenSource;
         private bool _isExecuting;
         private double _progress;
@@ -90,7 +90,7 @@ namespace CD_in
 
         #endregion
 
-        public MainViewModel(FolderProcessingService folderProcessingService)
+        public MainViewModel(IFolderProcessingService folderProcessingService)
         {
             _folderProcessingService = folderProcessingService;
             ExecuteCommand = new RelayCommand(async () => await ExecuteAsync(), CanExecute);
@@ -107,7 +107,7 @@ namespace CD_in
             UpdateProgress(0);
 
             if (int.TryParse(BlockSize, out var blockSize))
-                await _folderProcessingService.ProcessFolderAsync(CDInFolderPath, blockSize, UpdateProgress, tokenSource.Token);
+                await Task.Run(() => _folderProcessingService.ProcessFolderAsync(CDInFolderPath, blockSize, UpdateProgress, tokenSource.Token));
 
             IsExecuting = false;
         }

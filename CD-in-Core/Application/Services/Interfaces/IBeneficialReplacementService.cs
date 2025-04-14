@@ -4,7 +4,7 @@ using CD_in_Core.Domain.Models.Sequences;
 
 namespace CD_in_Core.Application.Services.Interfaces
 {
-    public interface IBeneficialReplacementService
+    internal interface IBeneficialReplacementService
     {
         ReplacementResult PerformBeneficialReplacement(Sequence sequence, ValueTransformationOptions options);
     }

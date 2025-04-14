@@ -1,14 +1,14 @@
 ﻿using CD_in_Core.Application.Services.Interfaces;
 using CD_in_Core.Domain.Models.Sequences;
 
-namespace CD_in_Core.Application.Services
+namespace CD_in_Core.Application.Services.Sequences
 {
     internal class SequenceExtractorService : ISequenceExtractorService
     {
         public Sequence ExstractSequence(Sequence sequence, SequenceExtractionOptions options)
         {
-            var resultSequence = new Sequence();
-            var currentSequence = new Dictionary<int, int>(); 
+            var resultSequence = new Sequence(sequence.Count);
+            var currentSequence = new Dictionary<int, int>(options.MinSequenceLength); 
 
             foreach(var element in sequence.Digits)
             {
@@ -22,7 +22,7 @@ namespace CD_in_Core.Application.Services
                     {
                         foreach (var kvp in currentSequence)
                         {
-                            resultSequence.Digits[kvp.Key] = kvp.Value;
+                            resultSequence.Add(kvp.Key, kvp.Value);
                         }
                     }
 

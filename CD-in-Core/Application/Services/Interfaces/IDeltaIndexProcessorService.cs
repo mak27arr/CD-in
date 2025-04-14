@@ -3,7 +3,7 @@ using CD_in_Core.Domain.Models.Sequences;
 
 namespace CD_in_Core.Application.Services.Interfaces
 {
-    public interface IDeltaIndexProcessorService
+    internal interface IDeltaIndexProcessorService
     {
         IAsyncEnumerable<Element> ProcessFile(string filePath, DeltaIndexParams parameters, Action<double> progressCallback,CancellationToken cancellationToken = default);
     }

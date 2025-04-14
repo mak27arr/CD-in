@@ -2,7 +2,14 @@
 {
     public class Sequence
     {
-        public Dictionary<int, int> Digits { get; internal set; } = new();
+        public Dictionary<int, int> Digits { get; internal set; }
+
+        public int Count => Digits?.Count ?? 0;
+
+        internal Sequence(int size = 1)
+        {
+            Digits = new Dictionary<int, int>(size); 
+        }
 
         internal void Add(int key, int value)
         {

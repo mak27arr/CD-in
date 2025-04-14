@@ -19,8 +19,8 @@ namespace CD_in_Core.Domain.Models.Replacement
 
         private bool IsIsolated(int index)
         {
-            return (!_sequence.Digits.ContainsKey(index - 1) || _sequence.Digits[index - 1] != _searchValue)
-                && (!_sequence.Digits.ContainsKey(index + 1) || _sequence.Digits[index + 1] != _searchValue);
+            return (!_sequence.Digits.TryGetValue(index - 1, out var left) || left != _searchValue)
+                && (!_sequence.Digits.TryGetValue(index + 1, out var right) || right != _searchValue);
         }
 
         public void SetSequence(Sequence sequence)

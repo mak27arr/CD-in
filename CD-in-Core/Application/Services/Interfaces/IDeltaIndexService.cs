@@ -2,7 +2,7 @@
 
 namespace CD_in_Core.Application.Services.Interfaces
 {
-    public interface IDeltaIndexService
+    internal interface IDeltaIndexService
     {
         IEnumerable<Element> ProcessBlock(IEnumerable<byte> digits, int globalOffset);
     }

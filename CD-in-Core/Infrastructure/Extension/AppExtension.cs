@@ -1,4 +1,7 @@
 ﻿using CD_in_Core.Infrastructure.FileServices;
+using CD_in_Core.Infrastructure.FileServices.Interfaces;
+using CD_in_Core.Infrastructure.FileServices.Reader;
+using CD_in_Core.Infrastructure.FileServices.Writer;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CD_in_Core.Infrastructure.Extension

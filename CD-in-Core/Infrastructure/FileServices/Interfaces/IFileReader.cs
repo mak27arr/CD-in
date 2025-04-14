@@ -1,4 +1,4 @@
-﻿namespace CD_in_Core.Infrastructure.FileServices
+﻿namespace CD_in_Core.Infrastructure.FileServices.Interfaces
 {
     public interface IFileReader
     {
