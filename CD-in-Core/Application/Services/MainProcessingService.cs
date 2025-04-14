@@ -77,7 +77,6 @@ namespace CD_in_Core.Application.Services
                 _logger.LogInformation("Finish process file: {0}", filePath);
             }
 
-            sequenceWriter.Complete();
             await sequenceWriter.WaitToFinishAsync();
         }
 

@@ -7,8 +7,6 @@ namespace CD_in_Core.Infrastructure.FileServices.Interfaces
     {
         Task AppendSequenceAsync(WriteRequest writeRequest, CancellationToken token);
 
-        void Complete();
-
         Task WaitToFinishAsync();
     }
 }

@@ -10,6 +10,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
     public class SequenceWriter : ISequenceWriter
     {
         private readonly Channel<WriteRequest> _channel;
+        private readonly Task _writeTask;
         private readonly CancellationTokenSource _cts = new();
         private readonly ILogger<SequenceWriter> _logger;
         private readonly int _maxSequenceInMemory;
@@ -24,7 +25,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
                 FullMode = BoundedChannelFullMode.Wait
             });
 
-            _ = Task.Factory.StartNew(() => ConsumeAsync(_cts.Token));
+            _writeTask = Task.Run(async () => await ConsumeAsync(_cts.Token));
         }
 
         public async Task AppendSequenceAsync(WriteRequest writeRequest, CancellationToken token)
@@ -32,9 +33,11 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
             await _channel.Writer.WriteAsync(writeRequest, token);
         }
 
-        public void Complete() => _channel.Writer.Complete();
-
-        public async Task WaitToFinishAsync() => await _channel.Reader.Completion;
+        public async Task WaitToFinishAsync()
+        {
+            _channel.Writer.TryComplete();
+            await Task.WhenAny(Task.WhenAll(_writeTask, _channel.Reader.Completion), Task.Delay(TimeSpan.FromMinutes(3)));
+        }
 
         private async Task ConsumeAsync(CancellationToken token)
         {
