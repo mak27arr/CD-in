@@ -4,7 +4,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
 {
     public class WriteRequest
     {
-        public required Sequence Sequence { get; init; }
+        public required ISequence Sequence { get; init; }
 
         public required string SourceFileName { get; init; }
 

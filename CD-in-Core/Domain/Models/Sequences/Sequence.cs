@@ -1,24 +1,57 @@
-﻿namespace CD_in_Core.Domain.Models.Sequences
-{
-    public class Sequence
-    {
-        public Dictionary<int, int> Digits { get; private set; }
+﻿using System.Collections;
 
-        public int Count => Digits?.Count ?? 0;
+namespace CD_in_Core.Domain.Models.Sequences
+{
+    public class Sequence : ISequence
+    {
+        internal Dictionary<int, Element> _digits;
+
+        public int Count => _digits?.Count ?? 0;
 
         internal Sequence(int size = 1)
         {
-            Digits = new Dictionary<int, int>(size); 
+            _digits = new Dictionary<int, Element>(size);
         }
 
-        internal void Add(int key, int value)
+        internal void Add(Element element)
         {
-            Digits.Add(key, value);
+            try
+            {
+                _digits.Add(element.Key, element);
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
 
         internal void Clear()
         {
-            Digits.Clear();
+            _digits.Clear();
         }
+
+        public Element GetNext(Element item)
+        {
+            return _digits.TryGetValue(item.Key + 1, out var element) ? element : Element.Default;
+        }
+
+        public Element GetPrevious(Element item)
+        {
+            return _digits.TryGetValue(item.Key - 1, out var element) ? element : Element.Default;
+        }
+
+        #region IEnumerable<Element>
+
+        public IEnumerator<Element> GetEnumerator()
+        {
+            return _digits.Values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        #endregion
     }
 }

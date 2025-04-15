@@ -5,6 +5,6 @@ namespace CD_in_Core.Application.Services.Interfaces
 {
     internal interface ILargeNumberExtractionService
     {
-        Sequence ExtractLargeNumbers(Sequence sequence, LargeNumberExtractionOptions options);
+        ISequence ExtractLargeNumbers(ISequence sequence, LargeNumberExtractionOptions options);
     }
 }

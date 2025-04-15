@@ -1,5 +1,6 @@
 ﻿using CD_in_Core.Infrastructure.FileServices.Interfaces;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.ObjectPool;
 using System.Runtime.CompilerServices;
 using System.Threading.Channels;
 
@@ -15,7 +16,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
             _logger = logger;
         }
 
-        public async IAsyncEnumerable<List<byte>> ReadDigitsInBlocksAsync(
+        public async IAsyncEnumerable<PoolArray<byte>> ReadDigitsInBlocksAsync(
             string filePath,
             int blockSize,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -24,9 +25,10 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
             {
                 FullMode = BoundedChannelFullMode.Wait
             });
-            var block = new List<byte>(blockSize);
-
+            var block = new byte[blockSize];
+            var pool = CreateArrayPoolIfNeed(blockSize);
             var reedTask = Task.Run(ReadFileContentToChannel(filePath, channel, cancellationToken));
+            var index = 0;
 
             await foreach (var lineChar in channel.Reader.ReadAllAsync(cancellationToken))
             {
@@ -34,7 +36,8 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
 
                 if (number >= 0 && number < 10)
                 {
-                    block.Add(number);
+                    block[index] = number;
+                    index++;
                 }
                 else
                 {
@@ -42,10 +45,10 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
                     throw new ArgumentException($"File contains illegal char: {lineChar}");
                 }
 
-                if (block.Count >= blockSize)
+                if (index >= blockSize)
                 {
-                    yield return new List<byte>(block);
-                    block.Clear();
+                    yield return CloneToPoolArray(pool, block, index);
+                    index = 0;
                 }
             }
 
@@ -53,8 +56,23 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
             if (reedTask.Exception != null)
                 throw reedTask.Exception.InnerException ?? reedTask.Exception;
 
-            if (block.Count > 0)
-                yield return block;
+            if (index > 0)
+            {
+                yield return CloneToPoolArray(pool, block, index);
+            }
+        }
+
+        private ObjectPool<byte[]> CreateArrayPoolIfNeed(int blockSize)
+        {
+            var poolProvider = new DefaultObjectPoolProvider();
+            return poolProvider.Create(new ArrayPooledObjectPolicy<byte>(blockSize));
+        }
+
+        private static PoolArray<byte> CloneToPoolArray(ObjectPool<byte[]> pool, byte[] block, int index)
+        {
+            var result = new PoolArray<byte>(pool);
+            result.Copy(block, index);
+            return result;
         }
 
         private Func<Task?> ReadFileContentToChannel(string filePath, Channel<char> channel, CancellationToken cancellationToken)
@@ -69,11 +87,11 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
                     while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested)
                     {
                         var count = await reader.ReadAsync(buffer, 0, buffer.Length);
-                        var filteredChars = buffer.Take(count).Where(c => c != '\r' && c != '\n').ToArray();
+                        var filteredChars = buffer.Take(count).Where(c => c != '\r' && c != '\n');
 
-                        foreach (var namberChar in filteredChars.Take(count))
+                        foreach (var namberChar in filteredChars)
                         {
-                                await channel.Writer.WriteAsync(namberChar, cancellationToken);
+                            await channel.Writer.WriteAsync(namberChar, cancellationToken);
                         }
                     }
                 }

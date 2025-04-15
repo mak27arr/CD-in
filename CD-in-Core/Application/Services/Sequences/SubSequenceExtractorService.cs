@@ -5,18 +5,18 @@ namespace CD_in_Core.Application.Services.Sequences
 {
     internal class SubSequenceExtractorService : ISubSequenceExtractorService
     {
-        private readonly Dictionary<int, int> _currentSequence = new Dictionary<int, int>();
+        private readonly List<Element> _currentSequence = new List<Element>();
 
-        public Sequence ExstractSequence(Sequence sequence, SubSequenceExtractionOptions options)
+        public ISequence ExstractSequence(ISequence sequence, SubSequenceExtractionOptions options)
         {
             var resultSequence = new Sequence(sequence.Count);
             _currentSequence.Clear();
 
-            foreach (var element in sequence.Digits)
+            foreach (var element in sequence)
             {
                 if (options.Condition.IsSatisfiedBy(element.Value))
                 {
-                    _currentSequence.Add(element.Key, element.Value);
+                    _currentSequence.Add(element);
                 }
                 else
                 {
@@ -36,7 +36,7 @@ namespace CD_in_Core.Application.Services.Sequences
             {
                 foreach (var kvp in _currentSequence)
                 {
-                    resultSequence.Add(kvp.Key, kvp.Value);
+                    resultSequence.Add(kvp);
                 }
             }
         }

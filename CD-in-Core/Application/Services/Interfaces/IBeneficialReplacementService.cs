@@ -6,6 +6,6 @@ namespace CD_in_Core.Application.Services.Interfaces
 {
     internal interface IBeneficialReplacementService
     {
-        ReplacementResult PerformBeneficialReplacement(Sequence sequence, ValueTransformationOptions options);
+        ReplacementResult PerformBeneficialReplacement(ISequence sequence, ValueTransformationOptions options);
     }
 }

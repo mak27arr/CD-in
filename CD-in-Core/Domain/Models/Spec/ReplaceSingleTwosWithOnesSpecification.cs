@@ -3,29 +3,28 @@ using CD_in_Core.Domain.Models.Specification;
 
 namespace CD_in_Core.Domain.Models.Replacement
 {
-    public class ReplaceSingleTwosWithOnesSpecification : ISequenceCondition<KeyValuePair<int, int>>
+    public class ReplaceSingleTwosWithOnesSpecification : ISequenceCondition<Element>
     {
-        private Sequence? _sequence;
+        private ISequence? _sequence;
         private int _searchValue = 2;
 
-        public void SetSequence(Sequence sequence)
+        public void SetSequence(ISequence sequence)
         {
             _sequence = sequence;
         }
 
-        public bool IsSatisfiedBy(KeyValuePair<int, int> item)
+        public bool IsSatisfiedBy(Element item)
         {
             if (_sequence == null)
                 throw new InvalidOperationException("Sequence is not set");
 
-            var digit = _sequence.Digits[item.Key];
-            return digit == _searchValue && IsIsolated(item.Key);
+            return item.Value == _searchValue && IsIsolated(item);
         }
 
-        private bool IsIsolated(int index)
+        private bool IsIsolated(Element element)
         {
-            return (!_sequence.Digits.TryGetValue(index - 1, out var left) || left != _searchValue)
-                && (!_sequence.Digits.TryGetValue(index + 1, out var right) || right != _searchValue);
+            return (_sequence.GetPrevious(element).Value != _searchValue)
+                && (_sequence.GetNext(element).Value != _searchValue);
         }
     }
 }

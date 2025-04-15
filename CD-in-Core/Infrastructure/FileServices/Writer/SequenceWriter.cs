@@ -56,29 +56,28 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
             }
         }
 
-        private async Task AppendSequenceAsync(Sequence sequence, string sourceFileName, SequenceSaveOptions options, CancellationToken cancellationToken = default)
+        private async Task AppendSequenceAsync(ISequence sequence, string sourceFileName, SequenceSaveOptions options, CancellationToken cancellationToken = default)
         {
-            var fileName = $"{options.FileName}-{sourceFileName}.txt";
-            var fullName = Path.Combine(options.FilePath, fileName);
+            string fullName = GetDestFilePath(sourceFileName, options);
 
-            await using var stream = new FileStream(fullName, FileMode.Append, FileAccess.Write, FileShare.None, 8192, useAsync: true);
+            await using var stream = new FileStream(fullName, FileMode.Append, FileAccess.Write, FileShare.None, _stringBufferSize * 2, useAsync: true);
             await using var writer = new StreamWriter(stream);
 
             var contentBuffer = new StringBuilder(capacity: _stringBufferSize);
-            int batchSize = contentBuffer.Capacity / 2;
+            int batchSize = _stringBufferSize / 2;
             int counter = 0;
 
-            foreach (var digit in sequence.Digits)
+            foreach (var digit in sequence)
             {
                 if (cancellationToken.IsCancellationRequested)
                     break;
 
-                contentBuffer.AppendLine($"{digit.Key}:{digit.Value}");
+                contentBuffer.Append(digit.Key).Append(':').Append(digit.Value).AppendLine();
                 counter++;
 
                 if (counter >= batchSize)
                 {
-                    await writer.WriteAsync(contentBuffer.ToString());
+                    await writer.WriteAsync(contentBuffer);
                     contentBuffer.Clear();
                     counter = 0;
                 }
@@ -86,9 +85,15 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
 
             if (contentBuffer.Length > 0)
             {
-                await writer.WriteAsync(contentBuffer.ToString());
+                await writer.WriteAsync(contentBuffer);
             }
         }
 
+        private static string GetDestFilePath(string sourceFileName, SequenceSaveOptions options)
+        {
+            var fileName = $"{options.FileName}-{sourceFileName}.txt";
+            var fullName = Path.Combine(options.FilePath, fileName);
+            return fullName;
+        }
     }
 }

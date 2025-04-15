@@ -4,6 +4,6 @@ namespace CD_in_Core.Application.Services.Interfaces
 {
     internal interface ISubSequenceExtractorService
     {
-        Sequence ExstractSequence(Sequence sequence, SubSequenceExtractionOptions options);
+        ISequence ExstractSequence(ISequence sequence, SubSequenceExtractionOptions options);
     }
 }

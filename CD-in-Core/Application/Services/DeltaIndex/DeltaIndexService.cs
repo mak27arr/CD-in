@@ -1,5 +1,6 @@
 ﻿using CD_in_Core.Application.Services.Interfaces;
 using CD_in_Core.Domain.Models.Sequences;
+using CD_in_Core.Infrastructure.FileServices.Reader;
 
 namespace CD_in_Core.Application.Services.DeltaIndex
 {
@@ -8,7 +9,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
         private readonly List<Element> _onesIndexesAndDeltas = new();
         private readonly List<Element> _zerosIndexesAndDeltas = new();
 
-        public IEnumerable<Element> ProcessBlock(IEnumerable<byte> digits, int globalOffset)
+        public IEnumerable<Element> ProcessBlock(PoolArray<byte> digits, int globalOffset)
         {
             var index = 0;
             _onesIndexesAndDeltas.Clear();
@@ -35,11 +36,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
 
         private Element CreateElementForIndex(int globalOffset, int index)
         {
-            return new Element()
-            {
-                Index = globalOffset + index,
-                Value = index
-            };
+            return new Element(globalOffset + index, index);
         }
 
         private void CalculateTargetDelta(out IEnumerable<Element> deltas)
@@ -62,9 +59,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             for (int i = 1; i < indexesAndDeltas.Count; i++)
             {
                 var previous = indexesAndDeltas[i - 1];
-                var current = indexesAndDeltas[i];
-
-                current.Value = current.Index - previous.Index;
+                indexesAndDeltas[i].Value = indexesAndDeltas[i].Key - previous.Key;
             }
 
             return indexesAndDeltas;

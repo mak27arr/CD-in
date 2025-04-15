@@ -7,21 +7,21 @@ namespace CD_in_Core.Application.Services.Sequences
 {
     internal class BeneficialReplacementService : IBeneficialReplacementService
     {
-        public ReplacementResult PerformBeneficialReplacement(Sequence sequence, ValueTransformationOptions options)
+        public ReplacementResult PerformBeneficialReplacement(ISequence sequence, ValueTransformationOptions options)
         {
             var modified = new ReplacementResult(sequence.Count);
 
             options.Specification.SetSequence(sequence);
 
-            foreach (var kvp in sequence.Digits)
+            foreach (var kvp in sequence)
             {
                 if (options.Specification.IsSatisfiedBy(kvp))
                 {
-                    modified.Add(kvp.Key, options.ReplacementStrategy.Transform(kvp.Value));
+                    modified.Add(new Element(kvp.Key, options.ReplacementStrategy.Transform(kvp.Value)));
                 }
                 else
                 {
-                    modified.Add(kvp.Key, kvp.Value);
+                    modified.Add(kvp);
                 }
             }
 

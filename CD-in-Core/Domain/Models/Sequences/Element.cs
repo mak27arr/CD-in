@@ -2,17 +2,15 @@
 {
     public class Element
     {
-        public Element()
-        {
-        }
+        public static Element Default { get; } = new Element(int.MinValue, int.MinValue);
 
-        public Element(int index, int value)
+        public Element(int key, int value)
         {
-            Index = index;
+            Key = key;
             Value = value;
         }
 
-        public int Index { get; set; }
+        public int Key { get; set; }
         public int Value { get; set; }
     }
 }

@@ -35,16 +35,15 @@ public class SequenceWriterTests
     {
         // Arrange
         var cancellationToken = new CancellationToken();
-
+        var sequence = new Sequence(2);
+        sequence.Add(new Element(1, 10));
+        sequence.Add(new Element(2, 20));
         var request = new WriteRequest
         {
-            Sequence = new Sequence(2),
+            Sequence = sequence,
             SourceFileName = "file1.txt",
             Options = new SequenceSaveOptions { FilePath = "C:\\temp", FileName = "output" }
         };
-
-        request.Sequence.Add(1, 10);
-        request.Sequence.Add(2, 20);
 
         // Act
         var startTime = DateTime.Now;
@@ -65,9 +64,12 @@ public class SequenceWriterTests
         var cancellationToken = new CancellationToken();
 
         // Create a WriteRequest with some sequence data
+        var sequence = new Sequence(2);
+        sequence.Add(new Element(1, 0));
+        sequence.Add(new Element(2, 1));
         var request = new WriteRequest
         {
-            Sequence = new Sequence(2),
+            Sequence = sequence,
             SourceFileName = "file1",
             Options = new SequenceSaveOptions
             {
@@ -75,8 +77,6 @@ public class SequenceWriterTests
                 FileName = "output"
             }
         };
-        request.Sequence.Add(1, 0);
-        request.Sequence.Add(2, 1);
 
         // Act
         await _sequenceWriter.AppendSequenceAsync(request, cancellationToken);

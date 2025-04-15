@@ -29,7 +29,7 @@ namespace CD_Test
             var blockSize = 3;
             var filePath = CreateTempFile(lines);
             var reader = new FileReader(_loggerMock.Object);
-            var resultBlocks = new List<List<byte>>();
+            var resultBlocks = new List<PoolArray<byte>>();
 
             // Act
             await foreach (var block in reader.ReadDigitsInBlocksAsync(filePath, blockSize))
@@ -39,9 +39,9 @@ namespace CD_Test
 
             // Assert
             Assert.Equal(3, resultBlocks.Count);
-            Assert.Equal(new byte[] { 0, 1, 0 }, resultBlocks[0]);
-            Assert.Equal(new byte[] { 1, 0, 1 }, resultBlocks[1]);
-            Assert.Equal(new byte[] { 0 }, resultBlocks[2]);
+            Assert.Equal(new byte[] { 0, 1, 0 }, resultBlocks[0].Data);
+            Assert.Equal(new byte[] { 1, 0, 1 }, resultBlocks[1].Data);
+            Assert.Equal(new byte[] { 0 }, resultBlocks[2].Data);
         }
 
         [Fact]

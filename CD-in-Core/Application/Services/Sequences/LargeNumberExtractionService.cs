@@ -6,14 +6,14 @@ namespace CD_in_Core.Application.Services.Sequences
 {
     internal class LargeNumberExtractionService : ILargeNumberExtractionService
     {
-        public Sequence ExtractLargeNumbers(Sequence sequence, LargeNumberExtractionOptions options)
+        public ISequence ExtractLargeNumbers(ISequence sequence, LargeNumberExtractionOptions options)
         {
             var resultSequence = new Sequence();
 
-            foreach (var kvp in sequence.Digits)
+            foreach (var kvp in sequence)
             {
                 if (options.Condition.IsSatisfiedBy(kvp.Value))
-                    resultSequence.Add(kvp.Key, kvp.Value);
+                    resultSequence.Add(kvp);
             }
 
             return resultSequence;

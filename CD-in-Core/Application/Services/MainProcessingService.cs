@@ -44,32 +44,32 @@ namespace CD_in_Core.Application.Services
             if (string.IsNullOrWhiteSpace(option.InputFilesType))
                 throw new ArgumentException("Please set InputFilesType");
 
-            var inputFilePaths = Directory.GetFiles(option.FolderPath, option.InputFilesType);
-            var fileCount = inputFilePaths.Count();
+            var inputFilesPaths = Directory.GetFiles(option.FolderPath, option.InputFilesType);
+            var fileCount = inputFilesPaths.Count();
             var sequenceWriter = _serviceProvider.GetRequiredService<ISequenceWriter>();
 
-            foreach (var filePath in inputFilePaths)
+            foreach (var filePath in inputFilesPaths)
             {
                 _logger.LogInformation("Start process file: {0}", filePath);
                 var fileName = Path.GetFileNameWithoutExtension(filePath);
                 var deltaResult = _fileReader.ProcessFile(filePath, option.DeltaParam, (progress) => UpdateProgress(progress, fileCount, progressCallback), token);
-                var sequence = new Sequence();
+                var sequence = new Sequence(option.DeltaParam.BlockSize);
 
                 await foreach (var element in deltaResult)
                 {
                     if (token.IsCancellationRequested)
                         return;
 
-                    sequence.Add(element.Index, element.Value);
+                    sequence.Add(element);
 
-                    if (sequence.Digits.Count == option.DeltaParam.BlockSize)
+                    if (sequence.Count == option.DeltaParam.BlockSize)
                     {
                         await ProccesInputSequence(option, sequenceWriter, fileName, sequence, token);
                         sequence.Clear();
                     }
                 }
 
-                if (!token.IsCancellationRequested && sequence.Digits.Count > 0)
+                if (!token.IsCancellationRequested && sequence.Count > 0)
                 {
                     await ProccesInputSequence(option, sequenceWriter, fileName, sequence, token);
                 }
@@ -80,13 +80,15 @@ namespace CD_in_Core.Application.Services
             await sequenceWriter.WaitToFinishAsync();
         }
 
-        private async Task ProccesInputSequence(ProcessingOption option, ISequenceWriter sequenceWriter, string fileName, Sequence sequence, CancellationToken token)
+        private async Task ProccesInputSequence(ProcessingOption option, ISequenceWriter sequenceWriter, string fileName, ISequence sequence, CancellationToken token)
         {
-            foreach (var extractionOption in option.ExtractionOptions)
+            var tasks = option.ExtractionOptions.Select(async extractionOption =>
             {
                 var result = ProccesSequenceForOption(sequence, extractionOption.SelectOption);
                 await SaveResult(sequenceWriter, result, fileName, extractionOption.SaveOptions, token);
-            }
+            });
+
+            await Task.WhenAll(tasks);
         }
 
         private void UpdateProgress(double progress, int fileCount, Action<double> progressCallback)
@@ -94,7 +96,7 @@ namespace CD_in_Core.Application.Services
             progressCallback?.Invoke(progress / fileCount);
         }
 
-        private async Task SaveResult(ISequenceWriter sequenceWriter, Sequence sequence, string sourceName, SequenceSaveOptions saveOptions, CancellationToken token)
+        private async Task SaveResult(ISequenceWriter sequenceWriter, ISequence sequence, string sourceName, SequenceSaveOptions saveOptions, CancellationToken token)
         {
             if (saveOptions != null)
             {
@@ -108,7 +110,7 @@ namespace CD_in_Core.Application.Services
             }
         }
 
-        private Sequence ProccesSequenceForOption(Sequence sequence, IOptions extractionOption)
+        private ISequence ProccesSequenceForOption(ISequence sequence, IOptions extractionOption)
         {
             switch (extractionOption)
             {

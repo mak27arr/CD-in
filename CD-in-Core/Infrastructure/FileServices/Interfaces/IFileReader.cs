@@ -1,7 +1,9 @@
-﻿namespace CD_in_Core.Infrastructure.FileServices.Interfaces
+﻿using CD_in_Core.Infrastructure.FileServices.Reader;
+
+namespace CD_in_Core.Infrastructure.FileServices.Interfaces
 {
     public interface IFileReader
     {
-        IAsyncEnumerable<List<byte>> ReadDigitsInBlocksAsync(string filePath, int blockSize, CancellationToken cancellationToken = default);
+        IAsyncEnumerable<PoolArray<byte>> ReadDigitsInBlocksAsync(string filePath, int blockSize, CancellationToken cancellationToken = default);
     }
 }
