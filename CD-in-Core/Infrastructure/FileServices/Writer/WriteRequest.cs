@@ -9,5 +9,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
         public required string SourceFileName { get; init; }
 
         public required SequenceSaveOptions Options { get; init; }
+
+        public Action<ISequence> OnWriteComplete { get; init; } 
     }
 }

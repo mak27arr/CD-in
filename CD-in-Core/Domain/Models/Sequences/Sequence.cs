@@ -2,7 +2,7 @@
 
 namespace CD_in_Core.Domain.Models.Sequences
 {
-    public class Sequence : ISequence
+    internal class Sequence : ISequence
     {
         internal Dictionary<int, Element> _digits;
 
@@ -15,14 +15,7 @@ namespace CD_in_Core.Domain.Models.Sequences
 
         internal void Add(Element element)
         {
-            try
-            {
-                _digits.Add(element.Key, element);
-            }
-            catch(Exception ex)
-            {
-
-            }
+            _digits.Add(element.Key, element);
         }
 
         internal void Clear()

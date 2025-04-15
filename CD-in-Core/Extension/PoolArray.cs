@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.ObjectPool;
 using System.Collections;
 
-namespace CD_in_Core.Infrastructure.FileServices.Reader
+namespace CD_in_Core.Extension
 {
     public class PoolArray<T> : IEnumerable<T>
     {
@@ -19,7 +19,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
 
         public int Count => _index;
 
-        public void Dispose()
+        public void Release()
         {
             if (_array != null)
             {

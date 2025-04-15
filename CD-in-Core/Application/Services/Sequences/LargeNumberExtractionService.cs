@@ -1,4 +1,5 @@
-﻿using CD_in_Core.Application.Services.Interfaces;
+﻿using CD_in_Core.Application.Pool;
+using CD_in_Core.Application.Services.Interfaces;
 using CD_in_Core.Domain.Models;
 using CD_in_Core.Domain.Models.Sequences;
 
@@ -6,9 +7,16 @@ namespace CD_in_Core.Application.Services.Sequences
 {
     internal class LargeNumberExtractionService : ILargeNumberExtractionService
     {
+        private readonly SequencePool _pool;
+
+        public LargeNumberExtractionService(SequencePool pool)
+        {
+            _pool = pool;
+        }
+
         public ISequence ExtractLargeNumbers(ISequence sequence, LargeNumberExtractionOptions options)
         {
-            var resultSequence = new Sequence();
+            var resultSequence = _pool.Get();
 
             foreach (var kvp in sequence)
             {

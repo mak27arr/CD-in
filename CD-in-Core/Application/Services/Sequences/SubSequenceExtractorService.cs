@@ -1,4 +1,5 @@
-﻿using CD_in_Core.Application.Services.Interfaces;
+﻿using CD_in_Core.Application.Pool;
+using CD_in_Core.Application.Services.Interfaces;
 using CD_in_Core.Domain.Models.Sequences;
 
 namespace CD_in_Core.Application.Services.Sequences
@@ -6,10 +7,16 @@ namespace CD_in_Core.Application.Services.Sequences
     internal class SubSequenceExtractorService : ISubSequenceExtractorService
     {
         private readonly List<Element> _currentSequence = new List<Element>();
+        private readonly SequencePool _pool;
+
+        public SubSequenceExtractorService(SequencePool pool)
+        {
+            _pool = pool;
+        }
 
         public ISequence ExstractSequence(ISequence sequence, SubSequenceExtractionOptions options)
         {
-            var resultSequence = new Sequence(sequence.Count);
+            var resultSequence = _pool.Get();
             _currentSequence.Clear();
 
             foreach (var element in sequence)

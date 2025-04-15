@@ -1,6 +1,6 @@
 ﻿using CD_in_Core.Application.Services.Interfaces;
 using CD_in_Core.Domain.Models.Sequences;
-using CD_in_Core.Infrastructure.FileServices.Reader;
+using CD_in_Core.Extension;
 
 namespace CD_in_Core.Application.Services.DeltaIndex
 {

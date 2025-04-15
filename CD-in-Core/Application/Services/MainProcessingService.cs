@@ -104,7 +104,8 @@ namespace CD_in_Core.Application.Services
                 {
                     Sequence = sequence,
                     SourceFileName = sourceName,
-                    Options = saveOptions
+                    Options = saveOptions,
+                    OnWriteComplete = (s) => { (s as IPoolSequence)?.Release(); }
                 };
                 await sequenceWriter.AppendSequenceAsync(requwest, token);
             }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.ObjectPool;
 
-namespace CD_in_Core.Infrastructure.FileServices.Reader
+namespace CD_in_Core.Extension
 {
     public class ArrayPooledObjectPolicy<T> : IPooledObjectPolicy<T[]>
     {

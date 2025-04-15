@@ -1,4 +1,4 @@
-﻿using CD_in_Core.Infrastructure.FileServices.Reader;
+﻿using CD_in_Core.Extension;
 
 namespace CD_in_Core.Infrastructure.FileServices.Interfaces
 {

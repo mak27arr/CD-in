@@ -48,6 +48,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
                 try
                 {
                     await AppendSequenceAsync(request.Sequence, request.SourceFileName, request.Options, token);
+                    request.OnWriteComplete?.Invoke(request.Sequence);
                 }
                 catch (Exception ex)
                 {
