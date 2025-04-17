@@ -9,9 +9,9 @@ namespace CD_in_Core.Application.Services.DeltaIndex
         private readonly List<Element> _onesIndexesAndDeltas = new();
         private readonly List<Element> _zerosIndexesAndDeltas = new();
 
-        public IEnumerable<Element> ProcessBlock(PoolArray<byte> digits, int globalOffset)
+        public IEnumerable<Element> ProcessBlock(PoolArray<byte> digits)
         {
-            var index = 0;
+            var index = 1;
             _onesIndexesAndDeltas.Clear();
             _zerosIndexesAndDeltas.Clear();
 
@@ -19,11 +19,11 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             {
                 if (digit == 0)
                 {
-                    _zerosIndexesAndDeltas.Add(CreateElementForIndex(globalOffset, index));
+                    _zerosIndexesAndDeltas.Add(CreateElementForIndex(index));
                 }
                 else if (digit == 1)
                 {
-                    _onesIndexesAndDeltas.Add(CreateElementForIndex(globalOffset, index));
+                    _onesIndexesAndDeltas.Add(CreateElementForIndex(index));
                 }
 
                 index++;
@@ -34,9 +34,9 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             return deltas;
         }
 
-        private Element CreateElementForIndex(int globalOffset, int index)
+        private Element CreateElementForIndex(int index)
         {
-            return new Element(globalOffset + index, index);
+            return new Element(index, index);
         }
 
         private void CalculateTargetDelta(out IEnumerable<Element> deltas)

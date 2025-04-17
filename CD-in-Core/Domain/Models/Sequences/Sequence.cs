@@ -15,7 +15,7 @@ namespace CD_in_Core.Domain.Models.Sequences
 
         internal void Add(Element element)
         {
-            _digits.Add(element.Key, element);
+            _digits[element.Key] = element;
         }
 
         internal void Clear()

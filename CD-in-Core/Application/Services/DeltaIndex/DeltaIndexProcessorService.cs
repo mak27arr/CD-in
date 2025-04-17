@@ -40,7 +40,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
 
             while (true)
             {
-                var delta = _deltaIndexService.ProcessBlock(currentBlock, globalOffset);
+                var delta = _deltaIndexService.ProcessBlock(currentBlock);
                 currentBlock.Release();
 
                 foreach (var element in delta)
