@@ -1,4 +1,5 @@
-﻿using CD_in_Core.Application.Services.Interfaces;
+﻿using CD_in_Core.Application.Pool;
+using CD_in_Core.Application.Services.Interfaces;
 using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Extension;
 
@@ -6,10 +7,10 @@ namespace CD_in_Core.Application.Services.DeltaIndex
 {
     internal class DeltaIndexService : IDeltaIndexService
     {
-        private readonly List<Element> _onesIndexesAndDeltas = new();
-        private readonly List<Element> _zerosIndexesAndDeltas = new();
+        private readonly List<IElement> _onesIndexesAndDeltas = new();
+        private readonly List<IElement> _zerosIndexesAndDeltas = new();
 
-        public IEnumerable<Element> ProcessBlock(PoolArray<byte> digits)
+        public IEnumerable<IElement> ProcessBlock(PoolArray<byte> digits)
         {
             var index = 1;
             _onesIndexesAndDeltas.Clear();
@@ -34,12 +35,12 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             return deltas;
         }
 
-        private Element CreateElementForIndex(int index)
+        private IElement CreateElementForIndex(int index)
         {
-            return new Element(index, index);
+            return new Element() { Key = index };
         }
 
-        private void CalculateTargetDelta(out IEnumerable<Element> deltas)
+        private void CalculateTargetDelta(out IEnumerable<IElement> deltas)
         {
             if (_onesIndexesAndDeltas.Count < _zerosIndexesAndDeltas.Count)
             {
@@ -51,7 +52,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             }
         }
 
-        public IEnumerable<Element> CalculateDelta(List<Element> indexesAndDeltas)
+        public IEnumerable<IElement> CalculateDelta(List<IElement> indexesAndDeltas)
         {
             if (indexesAndDeltas is null or { Count: 0 })
                 return Array.Empty<Element>();

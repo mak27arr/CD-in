@@ -3,16 +3,16 @@ using Microsoft.Extensions.ObjectPool;
 
 namespace CD_in_Core.Application.Pool
 {
-    internal class PoolSequence : Sequence, IPoolSequence
+    internal class PooledSequence : Sequence, IPoolSequence
     {
-        private ObjectPool<PoolSequence> _pool;
+        private ObjectPool<PooledSequence> _pool;
 
-        public PoolSequence(int size, ObjectPool<PoolSequence> pool) : base(size)
+        public PooledSequence(int size, ObjectPool<PooledSequence> pool) : base(size)
         {
             _pool = pool;
         }
 
-        internal void SetPool(ObjectPool<PoolSequence> pool)
+        internal void SetPool(ObjectPool<PooledSequence> pool)
         {
             if (_pool == pool)
                 return;

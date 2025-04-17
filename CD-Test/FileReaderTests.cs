@@ -1,5 +1,6 @@
 ﻿using CD_in_Core.Extension;
 using CD_in_Core.Infrastructure.FileServices.Reader;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -9,10 +10,19 @@ namespace CD_Test
     public class FileReaderTests
     {
         private readonly Mock<ILogger<FileReader>> _loggerMock;
+        private readonly IConfiguration _configuration;
 
         public FileReaderTests()
         {
             _loggerMock = new Mock<ILogger<FileReader>>();
+            var inMemorySettings = new Dictionary<string, string?>
+            {
+            { "SequenceReaderSettings:FileBufferSize", "1000" }
+            };
+
+            _configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
         }
 
         private string CreateTempFile(string[] lines)
@@ -29,7 +39,7 @@ namespace CD_Test
             var lines = new[] { "0", "1", "0", "1", "0", "1", "0" };
             var blockSize = 3;
             var filePath = CreateTempFile(lines);
-            var reader = new FileReader(_loggerMock.Object);
+            var reader = new FileReader(_configuration, _loggerMock.Object);
             var resultBlocks = new List<PoolArray<byte>>();
 
             // Act
@@ -51,7 +61,7 @@ namespace CD_Test
             // Arrange
             var lines = new[] { "0", "1", "x", "1" };
             var filePath = CreateTempFile(lines);
-            var reader = new FileReader(_loggerMock.Object);
+            var reader = new FileReader(_configuration, _loggerMock.Object);
 
             // Act & Assert
             var ex = await Assert.ThrowsAsync<ArgumentException>(async () =>

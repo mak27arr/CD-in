@@ -2,23 +2,23 @@
 
 namespace CD_in_Core.Application.Pool
 {
-    internal class SequencePool : ObjectPool<PoolSequence>
+    internal class SequencePool : ObjectPool<PooledSequence>
     {
-        private readonly ObjectPool<PoolSequence> _innerPool;
+        private readonly ObjectPool<PooledSequence> _innerPool;
 
-        public SequencePool(ObjectPool<PoolSequence> innerPool)
+        public SequencePool(ObjectPool<PooledSequence> innerPool)
         {
             _innerPool = innerPool ?? throw new ArgumentNullException(nameof(innerPool));
         }
 
-        public override PoolSequence Get()
+        public override PooledSequence Get()
         {
             var sequence = _innerPool.Get();
             sequence.SetPool(this);
             return sequence;
         }
 
-        public override void Return(PoolSequence item)
+        public override void Return(PooledSequence item)
         {
             _innerPool.Return(item);
         }

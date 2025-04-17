@@ -5,6 +5,6 @@ namespace CD_in_Core.Application.Services.Interfaces
 {
     internal interface IDeltaIndexService
     {
-        IEnumerable<Element> ProcessBlock(PoolArray<byte> digits);
+        IEnumerable<IElement> ProcessBlock(PoolArray<byte> digits);
     }
 }

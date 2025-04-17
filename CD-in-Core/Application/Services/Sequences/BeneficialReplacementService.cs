@@ -25,7 +25,11 @@ namespace CD_in_Core.Application.Services.Sequences
             {
                 if (options.Specification.IsSatisfiedBy(kvp))
                 {
-                    modified.Add(new Element(kvp.Key, options.ReplacementStrategy.Transform(kvp.Value)));
+                    modified.Add(new Element() 
+                    { 
+                        Key = kvp.Key, 
+                        Value = options.ReplacementStrategy.Transform(kvp.Value) 
+                    });
                 }
                 else
                 {

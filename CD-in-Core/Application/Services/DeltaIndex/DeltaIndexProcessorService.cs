@@ -22,7 +22,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             _fileReadProgressTracker = fileReadProgressTracker;
         }
 
-        public async IAsyncEnumerable<Element> ProcessFile(string filePath, 
+        public async IAsyncEnumerable<IElement> ProcessFile(string filePath, 
             DeltaIndexParams parameters,
             Action<double> progressCallback,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)

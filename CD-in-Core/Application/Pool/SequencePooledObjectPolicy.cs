@@ -2,7 +2,7 @@
 
 namespace CD_in_Core.Application.Pool
 {
-    internal class SequencePooledObjectPolicy : IPooledObjectPolicy<PoolSequence>
+    internal class SequencePooledObjectPolicy : IPooledObjectPolicy<PooledSequence>
     {
         private readonly int _size;
 
@@ -11,12 +11,12 @@ namespace CD_in_Core.Application.Pool
             _size = size;
         }
 
-        public PoolSequence Create()
+        public PooledSequence Create()
         {
-            return new PoolSequence(_size, null!);
+            return new PooledSequence(_size, null!);
         }
 
-        public bool Return(PoolSequence obj)
+        public bool Return(PooledSequence obj)
         {
             if (obj == null)
                 return false;

@@ -1,14 +1,8 @@
 ﻿namespace CD_in_Core.Domain.Models.Sequences
 {
-    public class Element
+    public class Element : IElement
     {
-        public static Element Default { get; } = new Element(int.MinValue, int.MinValue);
-
-        public Element(int key, int value)
-        {
-            Key = key;
-            Value = value;
-        }
+        public static Element Default { get; } = new Element() { Key = int.MinValue, Value = int.MinValue };
 
         public int Key { get; set; }
         public int Value { get; set; }

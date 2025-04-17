@@ -6,7 +6,7 @@ namespace CD_in_Core.Application.Services.Sequences
 {
     internal class SubSequenceExtractorService : ISubSequenceExtractorService
     {
-        private readonly List<Element> _currentSequence = new List<Element>();
+        private readonly List<IElement> _currentSequence = new List<IElement>();
         private readonly SequencePool _pool;
 
         public SubSequenceExtractorService(SequencePool pool)

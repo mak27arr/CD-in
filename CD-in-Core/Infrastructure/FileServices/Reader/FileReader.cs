@@ -16,7 +16,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
         public FileReader(IConfiguration configuration, ILogger<FileReader> logger)
         {
             _logger = logger;
-            _fileBufferSize = configuration.GetValue<int>("SequenceWriterSettings:MaxSequenceInMemory", 8192);
+            _fileBufferSize = configuration.GetValue<int>("SequenceReaderSettings:FileBufferSize", 8192);
         }
 
         public async IAsyncEnumerable<PoolArray<byte>> ReadDigitsInBlocksAsync(
@@ -53,9 +53,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
             }
 
             if (blockCurrentindex > 0)
-            {
                 yield return CloneToArrayFromPool(arrayPool, block, blockCurrentindex);
-            }
         }
 
         private int AddToBlockIfValid(byte[] block, int index, char namberChar)
