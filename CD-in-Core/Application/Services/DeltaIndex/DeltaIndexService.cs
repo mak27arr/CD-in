@@ -1,5 +1,4 @@
-﻿using CD_in_Core.Application.Pool;
-using CD_in_Core.Application.Services.Interfaces;
+﻿using CD_in_Core.Application.Services.Interfaces;
 using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Extension;
 
@@ -7,8 +6,8 @@ namespace CD_in_Core.Application.Services.DeltaIndex
 {
     internal class DeltaIndexService : IDeltaIndexService
     {
-        private readonly List<IElement> _onesIndexesAndDeltas = new();
-        private readonly List<IElement> _zerosIndexesAndDeltas = new();
+        private readonly List<int> _onesIndexesAndDeltas = new();
+        private readonly List<int> _zerosIndexesAndDeltas = new();
 
         public IEnumerable<IElement> ProcessBlock(PoolArray<byte> digits)
         {
@@ -20,50 +19,51 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             {
                 if (digit == 0)
                 {
-                    _zerosIndexesAndDeltas.Add(CreateElementForIndex(index));
+                    _zerosIndexesAndDeltas.Add(index);
                 }
                 else if (digit == 1)
                 {
-                    _onesIndexesAndDeltas.Add(CreateElementForIndex(index));
+                    _onesIndexesAndDeltas.Add(index);
                 }
 
                 index++;
             }
 
-            CalculateTargetDelta(out var deltas);
-
-            return deltas;
+            return CalculateTargetDelta();
         }
 
-        private IElement CreateElementForIndex(int index)
+        private Element CreateElementForIndex(int index, int value)
         {
-            return new Element() { Key = index };
+            return new Element() { Key = index, Value = value };
         }
 
-        private void CalculateTargetDelta(out IEnumerable<IElement> deltas)
+        private IEnumerable<IElement> CalculateTargetDelta()
         {
             if (_onesIndexesAndDeltas.Count < _zerosIndexesAndDeltas.Count)
             {
-                deltas = CalculateDelta(_onesIndexesAndDeltas);
+                return CalculateDelta(_onesIndexesAndDeltas);
             }
             else
             {
-                deltas = CalculateDelta(_zerosIndexesAndDeltas);
+                return CalculateDelta(_zerosIndexesAndDeltas);
             }
         }
 
-        public IEnumerable<IElement> CalculateDelta(List<IElement> indexesAndDeltas)
+        public IEnumerable<IElement> CalculateDelta(List<int> indexesAndDeltas)
         {
             if (indexesAndDeltas is null or { Count: 0 })
-                return Array.Empty<Element>();
+                return Array.Empty<IElement>();
+
+            var array = new Element[indexesAndDeltas.Count];
+            array[0] = CreateElementForIndex(indexesAndDeltas[0], indexesAndDeltas[0]);
 
             for (int i = 1; i < indexesAndDeltas.Count; i++)
             {
                 var previous = indexesAndDeltas[i - 1];
-                indexesAndDeltas[i].Value = indexesAndDeltas[i].Key - previous.Key;
+                array[i] = CreateElementForIndex(indexesAndDeltas[i], indexesAndDeltas[i] - previous);
             }
 
-            return indexesAndDeltas;
+            return array;
         }
     }
 }

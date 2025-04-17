@@ -2,7 +2,7 @@
 
 namespace CD_in_Core.Domain.Models.Sequences
 {
-    public class SubSequenceExtractionOptions : IOptions
+    public class SubSequenceExtractionOptions : BaseOption
     {
         public IValueCondition<int> Condition { get; init; } = default!;
 

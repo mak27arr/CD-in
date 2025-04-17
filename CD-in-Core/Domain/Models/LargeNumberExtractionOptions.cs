@@ -2,7 +2,7 @@
 
 namespace CD_in_Core.Domain.Models
 {
-    public class LargeNumberExtractionOptions : IOptions
+    public class LargeNumberExtractionOptions : BaseOption
     {
         public IValueCondition<int> Condition { get; set; } = default!;
     }

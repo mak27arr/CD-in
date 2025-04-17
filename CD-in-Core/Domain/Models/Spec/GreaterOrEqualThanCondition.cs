@@ -2,15 +2,15 @@
 
 namespace CD_in_Core.Domain.Models.Spec
 {
-    public class GreaterThanCondition : IValueCondition<int>
+    public class GreaterOrEqualThanCondition : IValueCondition<int>
     {
         private readonly int _threshold;
 
-        public GreaterThanCondition(int threshold)
+        public GreaterOrEqualThanCondition(int threshold)
         {
             _threshold = threshold;
         }
 
-        public bool IsSatisfiedBy(int value) => value > _threshold;
+        public bool IsSatisfiedBy(int value) => value >= _threshold;
     }
 }

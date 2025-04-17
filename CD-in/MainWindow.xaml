@@ -18,7 +18,7 @@
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="5">
                     <Label Content="Розмір блоку" Width="120"/>
-                    <TextBox Text="{Binding BlockSize}" Width="100"/>
+                    <TextBox Text="{Binding BlockSize}" PreviewTextInput="NumberValidationTextBox" Width="100"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="5">
@@ -35,9 +35,30 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Margin="5,5,5,5">
-                <Label Content="Об'єднання (1)" Margin="5"/>
-                <Label Content="Заміна (2)" Margin="5"/>
-                <Label Content="Висок більших (3)" Margin="5"/>
+                <StackPanel Orientation="Horizontal" Margin="1" VerticalAlignment="Center">
+                    <CheckBox IsChecked="{Binding IsMergeChecked}" Width="20" VerticalAlignment="Center"/>
+                    <Label Content="Об'єднання (1)" Width="120"/>
+                    <TextBox Text="{Binding MergeOrderLength}" Width="25" PreviewTextInput="NumberValidationTextBox" ToolTip="Довжина послідовності"/>
+                    <TextBox Text="{Binding MergeOrderExecution}" Width="25" PreviewTextInput="NumberValidationTextBox" ToolTip="Порядок виконання"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="1" VerticalAlignment="Center">
+                    <CheckBox IsChecked="{Binding IsMergeSecondChecked}" Width="20" VerticalAlignment="Center"/>
+                    <Label Content="Об'єднання (1)" Width="120"/>
+                    <TextBox Text="{Binding MergeSecondOrderLength}" Width="25" PreviewTextInput="NumberValidationTextBox" ToolTip="Довжина послідовності"/>
+                    <TextBox Text="{Binding MergeSecondOrderExecution}" Width="25" PreviewTextInput="NumberValidationTextBox" ToolTip="Порядок виконання"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="1" VerticalAlignment="Center">
+                    <CheckBox IsChecked="{Binding IsReplaceChecked}" Width="20" VerticalAlignment="Center"/>
+                    <Label Content="Заміна (2)" Width="120"/>
+                    <TextBox IsEnabled="False" Width="25" PreviewTextInput="NumberValidationTextBox"/>
+                    <TextBox Text="{Binding ReplaceOrderExecution}" Width="25" PreviewTextInput="NumberValidationTextBox" ToolTip="Порядок виконання"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="1" VerticalAlignment="Center">
+                    <CheckBox IsChecked="{Binding IsLargerChecked}" Width="20" VerticalAlignment="Center"/>
+                    <Label Content="Вибірка більших (3)" Width="120"/>
+                    <TextBox Text="{Binding LargerNumberValue}" Width="25" PreviewTextInput="NumberValidationTextBox" ToolTip="Мінімальне значення для виносу"/>
+                    <TextBox Text="{Binding LargerOrderExecution}" Width="25" PreviewTextInput="NumberValidationTextBox" ToolTip="Порядок виконання"/>
+                </StackPanel>
             </StackPanel>
 
             <Grid Grid.Column="1" Margin="5">
@@ -51,7 +72,9 @@
             </Grid>
         </Grid>
 
-        <ProgressBar Grid.Row="3" Height="20" Margin="5" Maximum="100" Value="{Binding Progress}">
+        <TextBox Grid.Row="3" Height="20" Margin="5" Text="{Binding ElapsedTime, StringFormat={}{0:mm\\:ss\\.fff}}" IsReadOnly="True" HorizontalContentAlignment="Center" BorderThickness="0"/>
+
+        <ProgressBar Grid.Row="4" Height="20" Margin="5" Maximum="100" Value="{Binding Progress}">
             <ProgressBar.Foreground>
                 <SolidColorBrush Color="LightGreen"/>
             </ProgressBar.Foreground>

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Input;
 
 namespace CD_in;
 
@@ -11,5 +13,11 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = viewModel;
+    }
+
+    private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+    {
+        // Allow only digits
+        e.Handled = !Regex.IsMatch(e.Text, @"^[0-9]+$");
     }
 }

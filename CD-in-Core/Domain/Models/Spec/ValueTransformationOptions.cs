@@ -3,7 +3,7 @@ using CD_in_Core.Domain.Models.Specification;
 
 namespace CD_in_Core.Domain.Models.Replacement
 {
-    public class ValueTransformationOptions : IOptions
+    public class ValueTransformationOptions : BaseOption
     {
         public ISequenceCondition<IElement> Specification { get; set; } = default!;
 
