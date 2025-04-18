@@ -21,15 +21,15 @@ namespace CD_in_Core.Application.Services.Sequences
 
             options.Specification.SetSequence(sequence);
 
-            foreach (var kvp in sequence)
+            foreach (var element in sequence)
             {
-                if (options.Specification.IsSatisfiedBy(kvp))
+                if (options.Specification.IsSatisfiedBy(element))
                 {
-                    modified.Add(new Element(kvp.Key, options.ReplacementStrategy.Transform(kvp.Value)));
+                    modified.Add(element.Key, options.ReplacementStrategy.Transform(element.Value));
                 }
                 else
                 {
-                    modified.Add(kvp);
+                    modified.Add(element);
                 }
             }
 

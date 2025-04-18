@@ -18,10 +18,10 @@ namespace CD_in_Core.Application.Services.Sequences
         {
             var resultSequence = _pool.Get();
 
-            foreach (var kvp in sequence)
+            foreach (var element in sequence)
             {
-                if (options.Condition.IsSatisfiedBy(kvp.Value))
-                    resultSequence.Add(kvp);
+                if (options.Condition.IsSatisfiedBy(element.Value))
+                    resultSequence.Add(element);
             }
 
             return resultSequence;

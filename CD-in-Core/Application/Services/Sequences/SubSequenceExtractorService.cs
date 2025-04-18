@@ -41,9 +41,9 @@ namespace CD_in_Core.Application.Services.Sequences
         {
             if (_currentSequence.Count >= options.MinSequenceLength)
             {
-                foreach (var kvp in _currentSequence)
+                foreach (var element in _currentSequence)
                 {
-                    resultSequence.Add(kvp);
+                    resultSequence.Add(element);
                 }
             }
         }

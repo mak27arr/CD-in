@@ -18,6 +18,11 @@ namespace CD_in_Core.Domain.Models.Sequences
             _digits[element.Key] = element;
         }
 
+        internal void Add(int key, int value)
+        {
+            _digits[key] = new Element(key, value);
+        }
+
         internal void Clear()
         {
             _digits.Clear();
