@@ -12,10 +12,10 @@ namespace CD_in
         private bool _isStatisticsChecked;
         private bool _isWithoutCdOutChecked;
         private string? _inFolderPath;
-        private bool _isMergeChecked;
-        private bool _isMergeSecondChecked;
-        private bool _isReplaceChecked;
-        private bool _isLargerChecked;
+        private bool _isMergeChecked = true;
+        private bool _isMergeSecondChecked = true;
+        private bool _isReplaceChecked = true;
+        private bool _isLargerChecked = true;
         private int _largerNumberValue = 11;
         private int _mergeOrderLength = 11;
         private int _mergeSecondOrderLength = 6;
@@ -27,7 +27,31 @@ namespace CD_in
 
         #endregion
 
-        private bool CanProcessFolder => !IsExecuting && !string.IsNullOrWhiteSpace(CDInFolderPath) && Directory.Exists(CDInFolderPath) && BlockSize > 0;
+        public override string this[string columnName]
+        {
+            get
+            {
+                switch (columnName)
+                {
+                    case nameof(BlockSize):
+                        return BlockSize <= 0 ? "Розмір блоку має бути позитивним" : string.Empty;
+                    case nameof(MergeOrderLength):
+                        return IsMergeChecked && MergeOrderLength <= 0 ? "Довжина об'єднання має бути позитивною" : string.Empty;
+                    case nameof(MergeSecondOrderLength):
+                        return IsMergeSecondChecked && MergeSecondOrderLength <= 0 ? "Довжина об'єднання має бути позитивною" : string.Empty;
+                    case nameof(LargerNumberValue):
+                        return IsLargerChecked && LargerNumberValue <= 0 ? "Значення для виносу має бути позитивним" : string.Empty;
+                    default:
+                        return string.Empty;
+                }
+            }
+        }
+
+        private bool CanProcessFolder => 
+            !IsExecuting 
+            && !string.IsNullOrWhiteSpace(CDInFolderPath) 
+            && Directory.Exists(CDInFolderPath) 
+            && IsPropertysValid(nameof(BlockSize), nameof(MergeOrderLength), nameof(MergeSecondOrderLength), nameof(LargerNumberValue));
 
         public int BlockSize
         {

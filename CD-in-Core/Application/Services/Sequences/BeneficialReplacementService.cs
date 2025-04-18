@@ -7,9 +7,9 @@ namespace CD_in_Core.Application.Services.Sequences
 {
     internal class BeneficialReplacementService : IBeneficialReplacementService
     {
-        private readonly SequencePool _pool;
+        private readonly ISequencePool _pool;
 
-        public BeneficialReplacementService(SequencePool pool)
+        public BeneficialReplacementService(ISequencePool pool)
         {
             _pool = pool;
         }
@@ -25,11 +25,7 @@ namespace CD_in_Core.Application.Services.Sequences
             {
                 if (options.Specification.IsSatisfiedBy(kvp))
                 {
-                    modified.Add(new Element() 
-                    { 
-                        Key = kvp.Key, 
-                        Value = options.ReplacementStrategy.Transform(kvp.Value) 
-                    });
+                    modified.Add(new Element(kvp.Key, options.ReplacementStrategy.Transform(kvp.Value)));
                 }
                 else
                 {

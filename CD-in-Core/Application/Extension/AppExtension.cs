@@ -21,10 +21,10 @@ namespace CD_in_Core.Application.Extension
             service.AddTransient<ISubSequenceExtractorService, SubSequenceExtractorService>();
             service.AddTransient<IMainProcessingService, MainProcessingService>();
             service.AddTransient<IFolderProcessingService, FolderProcessingService>();
-            service.AddSingleton<SequencePool>(provider =>
+            service.AddSingleton<ISequencePool>(provider =>
             {
                 var poolProvider = new DefaultObjectPoolProvider();
-                var poolPolicy = new SequencePooledObjectPolicy(size: 10000);
+                var poolPolicy = new SequencePooledObjectPolicy(size: 50000);
                 var innerPool = poolProvider.Create(poolPolicy);
                 var wrapper = new SequencePool(innerPool);
                 return wrapper;

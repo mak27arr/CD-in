@@ -1,4 +1,5 @@
-﻿using CD_in_Core.Application.Services.Interfaces;
+﻿using CD_in_Core.Application.Pool;
+using CD_in_Core.Application.Services.Interfaces;
 using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Extension;
 
@@ -8,25 +9,28 @@ namespace CD_in_Core.Application.Services.DeltaIndex
     {
         private readonly List<int> _onesIndexesAndDeltas = new();
         private readonly List<int> _zerosIndexesAndDeltas = new();
+        private readonly ISequencePool _pool;
+
+        public DeltaIndexService(ISequencePool pool)
+        {
+            _pool = pool;
+        }
 
         public IEnumerable<IElement> ProcessBlock(PoolArray<byte> digits)
         {
-            var index = 1;
             _onesIndexesAndDeltas.Clear();
             _zerosIndexesAndDeltas.Clear();
 
-            foreach (var digit in digits)
+            for (int i = 0; i < digits.Count; i++)
             {
-                if (digit == 0)
+                if (digits.Data[i] == 0)
                 {
-                    _zerosIndexesAndDeltas.Add(index);
+                    _zerosIndexesAndDeltas.Add(i);
                 }
-                else if (digit == 1)
+                else if (digits.Data[i] == 1)
                 {
-                    _onesIndexesAndDeltas.Add(index);
+                    _onesIndexesAndDeltas.Add(i);
                 }
-
-                index++;
             }
 
             return CalculateTargetDelta();
@@ -34,7 +38,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
 
         private Element CreateElementForIndex(int index, int value)
         {
-            return new Element() { Key = index, Value = value };
+            return new Element(index, value);
         }
 
         private IEnumerable<IElement> CalculateTargetDelta()
@@ -54,16 +58,16 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             if (indexesAndDeltas is null or { Count: 0 })
                 return Array.Empty<IElement>();
 
-            var array = new Element[indexesAndDeltas.Count];
-            array[0] = CreateElementForIndex(indexesAndDeltas[0], indexesAndDeltas[0]);
+            var sequence = _pool.Get();
+            sequence.Add(CreateElementForIndex(indexesAndDeltas[0], indexesAndDeltas[0]));
 
             for (int i = 1; i < indexesAndDeltas.Count; i++)
             {
                 var previous = indexesAndDeltas[i - 1];
-                array[i] = CreateElementForIndex(indexesAndDeltas[i], indexesAndDeltas[i] - previous);
+                sequence.Add(CreateElementForIndex(indexesAndDeltas[i], indexesAndDeltas[i] - previous));
             }
 
-            return array;
+            return sequence;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CD_in_Core.Application.Services.Interfaces;
+﻿using CD_in_Core.Application.Pool;
+using CD_in_Core.Application.Services.Interfaces;
 using CD_in_Core.Domain.Models.DeltaIndex;
 using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Infrastructure.FileServices.Interfaces;
@@ -40,14 +41,15 @@ namespace CD_in_Core.Application.Services.DeltaIndex
 
             while (true)
             {
-                var delta = _deltaIndexService.ProcessBlock(currentBlock);
+                var elementsDelta = _deltaIndexService.ProcessBlock(currentBlock);
                 currentBlock.Release();
 
-                foreach (var element in delta)
+                foreach (var element in elementsDelta)
                 {
                     yield return element;
                 }
 
+                (elementsDelta as IPooledSequence)?.Release();
                 globalOffset += currentBlock.Count;
 
                 if (progressCallback != null)

@@ -36,8 +36,8 @@ public class SequenceWriterTests
         // Arrange
         var cancellationToken = new CancellationToken();
         var sequence = new Sequence(2);
-        sequence.Add(new Element() { Key = 1, Value = 10 });
-        sequence.Add(new Element() { Key = 2, Value = 20 });
+        sequence.Add(new Element(1, 10));
+        sequence.Add(new Element(2, 20));
         var request = new WriteRequest
         {
             Sequence = sequence,
@@ -65,8 +65,8 @@ public class SequenceWriterTests
 
         // Create a WriteRequest with some sequence data
         var sequence = new Sequence(2);
-        sequence.Add(new Element() { Key = 1, Value = 0 });
-        sequence.Add(new Element() { Key = 2, Value = 1 });
+        sequence.Add(new Element(1, 0));
+        sequence.Add(new Element(2, 1));
         var request = new WriteRequest
         {
             Sequence = sequence,

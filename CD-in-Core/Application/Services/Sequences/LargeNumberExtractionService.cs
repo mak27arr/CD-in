@@ -7,9 +7,9 @@ namespace CD_in_Core.Application.Services.Sequences
 {
     internal class LargeNumberExtractionService : ILargeNumberExtractionService
     {
-        private readonly SequencePool _pool;
+        private readonly ISequencePool _pool;
 
-        public LargeNumberExtractionService(SequencePool pool)
+        public LargeNumberExtractionService(ISequencePool pool)
         {
             _pool = pool;
         }

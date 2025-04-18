@@ -2,7 +2,7 @@
 
 namespace CD_in_Core.Application.Pool
 {
-    internal class SequencePool : ObjectPool<PooledSequence>
+    internal class SequencePool : ObjectPool<PooledSequence>, ISequencePool
     {
         private readonly ObjectPool<PooledSequence> _innerPool;
 

@@ -1,18 +1,17 @@
 ﻿using CD_in_Core.Domain.Models.Sequences;
-using Microsoft.Extensions.ObjectPool;
 
 namespace CD_in_Core.Application.Pool
 {
-    internal class PooledSequence : Sequence, IPoolSequence
+    internal class PooledSequence : Sequence, IPooledSequence
     {
-        private ObjectPool<PooledSequence> _pool;
+        private ISequencePool _pool;
 
-        public PooledSequence(int size, ObjectPool<PooledSequence> pool) : base(size)
+        public PooledSequence(int size, ISequencePool pool) : base(size)
         {
             _pool = pool;
         }
 
-        internal void SetPool(ObjectPool<PooledSequence> pool)
+        internal void SetPool(ISequencePool pool)
         {
             if (_pool == pool)
                 return;

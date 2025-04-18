@@ -9,6 +9,9 @@ using System.IO;
 using System.Windows.Threading;
 using System.Diagnostics;
 using CD_in.ViewModel;
+using System.Windows;
+using Microsoft.Extensions.Logging;
+using System.Windows.Controls;
 
 namespace CD_in
 {
@@ -16,8 +19,9 @@ namespace CD_in
     {
         private DispatcherTimer _timer;
         private Stopwatch _stopwatch;
+        private readonly ILogger<MainViewModel> _logger;
         private IFolderProcessingService _folderProcessingService;
-        private CancellationTokenSource? tokenSource;
+        private CancellationTokenSource? _tokenSource;
 
         #region ICommand
 
@@ -27,15 +31,16 @@ namespace CD_in
 
         #endregion
 
-        public MainViewModel(IFolderProcessingService folderProcessingService)
+        public MainViewModel(ILogger<MainViewModel> logger, IFolderProcessingService folderProcessingService)
         {
+            _logger = logger;
             _folderProcessingService = folderProcessingService;
             _stopwatch = new Stopwatch();
             _timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(50)
+                Interval = TimeSpan.FromMilliseconds(100)
             };
-            _timer.Tick += (s, e) => ElapsedTime = _stopwatch?.Elapsed ?? TimeSpan.MinValue;
+            _timer.Tick += (s, e) => UpdateExlapsedTime();
 
             ProcessFolderCommand = new RelayCommand(async () => await ExecuteAsync(), () => CanProcessFolder);
             CancelCommand = new RelayCommand(Cancel);
@@ -46,18 +51,31 @@ namespace CD_in
 
         private async Task ExecuteAsync()
         {
-            IsExecuting = true;
-            tokenSource = new CancellationTokenSource();
-            ResetAndStartMeasurement();
-            var option = BuildProcessingOption();
-            await Task.Run(() => _folderProcessingService.ProcessFolderAsync(option, UpdateProgress, tokenSource.Token));
-            StopMeasurement();
-            IsExecuting = false;
+            try
+            {
+                IsExecuting = true;
+                _tokenSource = new CancellationTokenSource();
+                ResetAndStartMeasurement();
+                var option = BuildProcessingOption();
+                await Task.Run(() => _folderProcessingService.ProcessFolderAsync(option, UpdateProgress, _tokenSource.Token));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Processing Failed");
+                MessageBox.Show($"Error: {ex.Message}", "Processing Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                _tokenSource?.Dispose();
+                _tokenSource = null;
+                StopMeasurement();
+                IsExecuting = false;
+            }
         }
 
         private void Cancel()
         {
-            tokenSource?.Cancel();
+            _tokenSource?.Cancel();
         }
 
         private void OnCDInButtonClicked()
@@ -93,6 +111,7 @@ namespace CD_in
         {
             _stopwatch.Stop();
             _timer.Stop();
+            UpdateExlapsedTime();
         }
 
         private ProcessingOption BuildProcessingOption()
@@ -189,6 +208,11 @@ namespace CD_in
         {
             var parentFolder = Path.GetDirectoryName(folderPath);
             return parentFolder != null ? Path.Combine(parentFolder, "CD-out") : string.Empty;
+        }
+
+        private void UpdateExlapsedTime()
+        {
+            ElapsedTime = _stopwatch?.Elapsed ?? TimeSpan.MinValue;
         }
 
         #endregion
