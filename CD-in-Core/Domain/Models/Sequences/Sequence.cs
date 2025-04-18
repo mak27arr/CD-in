@@ -4,40 +4,45 @@ namespace CD_in_Core.Domain.Models.Sequences
 {
     internal class Sequence : ISequence
     {
-        internal Dictionary<int, IElement> _digits;
+        internal Dictionary<int, int> _digits;
 
         public int Count => _digits?.Count ?? 0;
 
         internal Sequence(int size = 1)
         {
-            _digits = new Dictionary<int, IElement>(size);
+            _digits = new Dictionary<int, int>(size);
         }
 
-        internal void Add(IElement element)
+        public void Add(int index, int value)
         {
-            _digits[element.Key] = element;
+            _digits[index] = value;
         }
 
-        internal void Clear()
+        public void Add(KeyValuePair<int, int> element)
+        {
+            _digits[element.Key] = element.Value;
+        }
+
+        public void Clear()
         {
             _digits.Clear();
         }
 
-        public IElement GetNext(IElement item)
+        public int GetNext(int index)
         {
-            return _digits.TryGetValue(item.Key + 1, out var element) ? element : Element.Default;
+            return _digits.TryGetValue(index + 1, out var element) ? element : Element.Default.Value;
         }
 
-        public IElement GetPrevious(IElement item)
+        public int GetPrevious(int index)
         {
-            return _digits.TryGetValue(item.Key - 1, out var element) ? element : Element.Default;
+            return _digits.TryGetValue(index - 1, out var element) ? element : Element.Default.Value;
         }
 
         #region IEnumerable<Element>
 
-        public IEnumerator<IElement> GetEnumerator()
+        public IEnumerator<KeyValuePair<int, int>> GetEnumerator()
         {
-            return _digits.Values.GetEnumerator();
+            return _digits.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

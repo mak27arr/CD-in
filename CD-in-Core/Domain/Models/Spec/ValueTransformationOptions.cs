@@ -5,7 +5,7 @@ namespace CD_in_Core.Domain.Models.Replacement
 {
     public class ValueTransformationOptions : BaseOption
     {
-        public ISequenceCondition<IElement> Specification { get; set; } = default!;
+        public ISequenceCondition<KeyValuePair<int, int>> Specification { get; set; } = default!;
 
         public IValueTransformer<int> ReplacementStrategy { get; set; } = default!;
     }

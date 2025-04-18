@@ -1,6 +1,6 @@
 ﻿namespace CD_in_Core.Domain.Models.Sequences
 {
-    public class Element : IElement
+    public class Element : KeyValuePair<int, int>
     {
         public static Element Default { get; } = new Element(int.MinValue, int.MinValue);
 

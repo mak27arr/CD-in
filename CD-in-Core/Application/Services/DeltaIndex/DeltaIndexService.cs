@@ -16,7 +16,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             _pool = pool;
         }
 
-        public IEnumerable<IElement> ProcessBlock(PoolArray<byte> digits)
+        public ISequence ProcessBlock(PoolArray<byte> digits)
         {
             _onesIndexesAndDeltas.Clear();
             _zerosIndexesAndDeltas.Clear();
@@ -41,7 +41,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             return new Element(index, value);
         }
 
-        private IEnumerable<IElement> CalculateTargetDelta()
+        private ISequence CalculateTargetDelta()
         {
             if (_onesIndexesAndDeltas.Count < _zerosIndexesAndDeltas.Count)
             {
@@ -53,18 +53,18 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             }
         }
 
-        public IEnumerable<IElement> CalculateDelta(List<int> indexesAndDeltas)
+        public ISequence CalculateDelta(List<int> indexesAndDeltas)
         {
             if (indexesAndDeltas is null or { Count: 0 })
-                return Array.Empty<IElement>();
+                return default;
 
             var sequence = _pool.Get();
-            sequence.Add(CreateElementForIndex(indexesAndDeltas[0], indexesAndDeltas[0]));
+            sequence.Add(indexesAndDeltas[0], indexesAndDeltas[0]);
 
             for (int i = 1; i < indexesAndDeltas.Count; i++)
             {
                 var previous = indexesAndDeltas[i - 1];
-                sequence.Add(CreateElementForIndex(indexesAndDeltas[i], indexesAndDeltas[i] - previous));
+                sequence.Add(indexesAndDeltas[i], indexesAndDeltas[i] - previous);
             }
 
             return sequence;

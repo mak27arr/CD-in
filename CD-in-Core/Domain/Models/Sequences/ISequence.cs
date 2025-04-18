@@ -1,12 +1,18 @@
 ﻿
 namespace CD_in_Core.Domain.Models.Sequences
 {
-    public interface ISequence : IEnumerable<IElement>
+    public interface ISequence : IEnumerable<KeyValuePair<int, int>>
     {
         int Count { get; }
 
-        IElement GetNext(IElement item);
+        void Add(int index, int value);
 
-        IElement GetPrevious(IElement item);
+        void Add(KeyValuePair<int, int> element);
+
+        void Clear();
+
+        int GetNext(int index);
+
+        int GetPrevious(int index);
     }
 }
