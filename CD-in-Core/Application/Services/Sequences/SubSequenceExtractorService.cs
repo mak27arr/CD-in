@@ -37,7 +37,7 @@ namespace CD_in_Core.Application.Services.Sequences
             return resultSequence;
         }
 
-        private void CopySubSequenceToResult(SubSequenceExtractionOptions options, Sequence resultSequence)
+        private void CopySubSequenceToResult(SubSequenceExtractionOptions options, IPooledSequence resultSequence)
         {
             if (_currentSequence.Count >= options.MinSequenceLength)
             {

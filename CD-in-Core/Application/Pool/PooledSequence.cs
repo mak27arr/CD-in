@@ -11,7 +11,7 @@ namespace CD_in_Core.Application.Pool
             _pool = pool;
         }
 
-        internal void SetPool(ISequencePool pool)
+        public void SetPool(ISequencePool pool)
         {
             if (_pool == pool)
                 return;

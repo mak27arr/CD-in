@@ -13,17 +13,17 @@ namespace CD_in_Core.Domain.Models.Sequences
             _digits = new Dictionary<int, IElement>(size);
         }
 
-        internal void Add(IElement element)
+        public void Add(IElement element)
         {
             _digits[element.Key] = element;
         }
 
-        internal void Add(int key, int value)
+        public void Add(int key, int value)
         {
             _digits[key] = new Element(key, value);
         }
 
-        internal void Clear()
+        public void Clear()
         {
             _digits.Clear();
         }
