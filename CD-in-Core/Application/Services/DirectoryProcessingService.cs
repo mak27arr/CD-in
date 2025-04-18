@@ -35,12 +35,13 @@ namespace CD_in_Core.Application.Services
 
             using var scope = _serviceProvider.CreateScope();
             var sequenceWriter = _serviceProvider.GetRequiredService<IOutputDispatcherService>();
+            var offset = 0;
 
             foreach (var filePath in inputFilesPaths)
             {
                 _logger.LogInformation("Start process file: {0}", filePath);
                 var fileName = Path.GetFileNameWithoutExtension(filePath);
-                var deltaResult = _deltaReader.ProcessFile(filePath, option.DeltaParam, (progress) => UpdateProgress(progress, fileCount, progressCallback), token);
+                var deltaResult = _deltaReader.ProcessFile(filePath, option.DeltaParam, (progress) => UpdateProgress(progress, fileCount, offset, progressCallback), token);
                 sequence.Clear();
 
                 await foreach (var element in deltaResult)
@@ -62,6 +63,8 @@ namespace CD_in_Core.Application.Services
                     await _processingService.ProccesInputSequence(option, sequenceWriter, fileName, sequence, token);
                 }
 
+                offset += 100 / fileCount;
+
                 _logger.LogInformation("Finish process file: {0}", filePath);
             }
 
@@ -82,9 +85,9 @@ namespace CD_in_Core.Application.Services
             return directorySettings;
         }
 
-        private void UpdateProgress(double progress, int fileCount, Action<double> progressCallback)
+        private void UpdateProgress(double progress, int fileCount, double offset, Action<double> progressCallback)
         {
-            progressCallback?.Invoke(progress / fileCount);
+            progressCallback?.Invoke((progress / fileCount) + offset);
         }
     }
 }
