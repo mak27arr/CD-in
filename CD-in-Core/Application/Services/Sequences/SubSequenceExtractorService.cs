@@ -1,5 +1,5 @@
 ﻿using CD_in_Core.Application.Pool;
-using CD_in_Core.Application.Services.Interfaces;
+using CD_in_Core.Application.Services.Interfaces.Sequences;
 using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Domain.Select;
 

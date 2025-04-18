@@ -1,7 +1,7 @@
 ﻿using CD_in_Core.Application.Settings;
 using CD_in_Core.Domain.Models.Sequences;
 
-namespace CD_in_Core.Infrastructure.FileServices.Writer
+namespace CD_in_Core.Infrastructure
 {
     public class WriteRequest
     {
@@ -9,7 +9,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
 
         public required string SourceFileName { get; init; }
 
-        public required SequenceSaveOptions Options { get; init; }
+        public required ISequenceSaveSettings SaveTo { get; init; }
 
         public Action<ISequence> OnWriteComplete { get; init; } 
     }

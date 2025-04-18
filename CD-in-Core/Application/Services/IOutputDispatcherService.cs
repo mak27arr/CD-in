@@ -1,9 +1,10 @@
-﻿namespace CD_in_Core.Infrastructure.FileServices.Interfaces
+﻿using CD_in_Core.Infrastructure;
+
+namespace CD_in_Core.Application.Services
 {
-    public interface ISequenceWriter
+    internal interface IOutputDispatcherService
     {
         Task AppendSequenceAsync(WriteRequest writeRequest, CancellationToken token);
-
         Task WaitToFinishAsync();
     }
 }

@@ -3,6 +3,7 @@ using CD_in_Core.Infrastructure.FileServices.Reader;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System.Linq;
 using Xunit;
 
 namespace CD_Test
@@ -50,9 +51,9 @@ namespace CD_Test
 
             // Assert
             Assert.Equal(3, resultBlocks.Count);
-            Assert.Equal(new byte[] { 0, 1, 0 }, resultBlocks[0].Data);
-            Assert.Equal(new byte[] { 1, 0, 1 }, resultBlocks[1].Data);
-            Assert.Equal(new byte[] { 0 }, resultBlocks[2].Data);
+            Assert.Equal(new byte[] { 0, 1, 0 }, resultBlocks[0].Data.Take(resultBlocks[0].Count));
+            Assert.Equal(new byte[] { 1, 0, 1 }, resultBlocks[1].Data.Take(resultBlocks[1].Count));
+            Assert.Equal(new byte[] { 0 }, resultBlocks[2].Data.Take(resultBlocks[2].Count));
         }
 
         [Fact]

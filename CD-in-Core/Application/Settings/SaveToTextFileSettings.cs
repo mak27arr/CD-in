@@ -1,6 +1,6 @@
 ﻿namespace CD_in_Core.Application.Settings
 {
-    public record SequenceSaveOptions
+    public record SaveToTextFileSettings : ISequenceSaveSettings
     {
         public required string FileName { get; set; }
 

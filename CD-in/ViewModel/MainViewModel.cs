@@ -19,7 +19,7 @@ namespace CD_in
         private DispatcherTimer _timer;
         private Stopwatch _stopwatch;
         private readonly ILogger<MainViewModel> _logger;
-        private IFolderProcessingService _folderProcessingService;
+        private IMainProcessingService _mainProcessingService;
         private CancellationTokenSource? _tokenSource;
 
         #region ICommand
@@ -30,10 +30,10 @@ namespace CD_in
 
         #endregion
 
-        public MainViewModel(ILogger<MainViewModel> logger, IFolderProcessingService folderProcessingService)
+        public MainViewModel(ILogger<MainViewModel> logger, IMainProcessingService folderProcessingService)
         {
             _logger = logger;
-            _folderProcessingService = folderProcessingService;
+            _mainProcessingService = folderProcessingService;
             _stopwatch = new Stopwatch();
             _timer = new DispatcherTimer
             {
@@ -56,7 +56,7 @@ namespace CD_in
                 _tokenSource = new CancellationTokenSource();
                 ResetAndStartMeasurement();
                 var option = BuildProcessingOption();
-                await Task.Run(() => _folderProcessingService.ProcessFolderAsync(option, UpdateProgress, _tokenSource.Token));
+                await Task.Run(() => _mainProcessingService.ProcessAsync(option, UpdateProgress, _tokenSource.Token));
             }
             catch (Exception ex)
             {
@@ -141,7 +141,7 @@ namespace CD_in
                         Condition = new EqualsCondition(1),
                         MinSequenceLength = MergeOrderLength
                     },
-                    SaveOptions = new SequenceSaveOptions()
+                    SaveOptions = new SaveToTextFileSettings()
                     {
                         FileName = "Обєднання 1",
                         FilePath = saveFolder
@@ -159,7 +159,7 @@ namespace CD_in
                         Condition = new EqualsCondition(2),
                         MinSequenceLength = MergeSecondOrderLength
                     },
-                    SaveOptions = new SequenceSaveOptions()
+                    SaveOptions = new SaveToTextFileSettings()
                     {
                         FileName = "Обєднання 2",
                         FilePath = saveFolder
@@ -177,7 +177,7 @@ namespace CD_in
                         Specification = new ReplaceSingleTwosWithOnesSpecification(),
                         ReplacementStrategy = new ConstantTransformer(1)
                     },
-                    SaveOptions = new SequenceSaveOptions()
+                    SaveOptions = new SaveToTextFileSettings()
                     {
                         FileName = "Заміна",
                         FilePath = saveFolder
@@ -194,7 +194,7 @@ namespace CD_in
                     {
                         Condition = new GreaterOrEqualThanCondition(LargerNumberValue)
                     },
-                    SaveOptions = new SequenceSaveOptions()
+                    SaveOptions = new SaveToTextFileSettings()
                     {
                         FileName = "Виніс великих",
                         FilePath = saveFolder

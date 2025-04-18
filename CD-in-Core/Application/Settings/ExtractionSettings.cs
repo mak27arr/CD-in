@@ -8,6 +8,6 @@ namespace CD_in_Core.Application.Settings
 
         public required IExtraction SelectOption { get; set; }
 
-        public required SequenceSaveOptions SaveOptions {get; set;}
+        public required SaveToTextFileSettings SaveOptions {get; set;}
     }
 }

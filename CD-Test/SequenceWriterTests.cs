@@ -5,6 +5,7 @@ using Xunit;
 using CD_in_Core.Infrastructure.FileServices.Writer;
 using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Application.Settings;
+using CD_in_Core.Infrastructure;
 
 public class SequenceWriterTests
 {
@@ -43,7 +44,7 @@ public class SequenceWriterTests
         {
             Sequence = sequence,
             SourceFileName = "file1.txt",
-            Options = new SequenceSaveOptions { FilePath = "C:\\temp", FileName = "output" }
+            SaveTo = new SaveToTextFileSettings { FilePath = "C:\\temp", FileName = "output" }
         };
 
         // Act
@@ -72,7 +73,7 @@ public class SequenceWriterTests
         {
             Sequence = sequence,
             SourceFileName = "file1",
-            Options = new SequenceSaveOptions
+            SaveTo = new SaveToTextFileSettings
             {
                 FilePath = _tempDirectory,
                 FileName = "output"
