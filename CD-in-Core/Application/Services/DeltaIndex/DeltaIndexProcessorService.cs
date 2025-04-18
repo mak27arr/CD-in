@@ -1,5 +1,5 @@
-﻿using CD_in_Core.Application.Services.Interfaces;
-using CD_in_Core.Domain.Models.DeltaIndex;
+﻿using CD_in_Core.Application.Settings.DeltaIndex;
+using CD_in_Core.Application.Services.Interfaces;
 using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Infrastructure.FileServices.Interfaces;
 using System.Runtime.CompilerServices;

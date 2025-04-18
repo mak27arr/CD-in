@@ -1,7 +1,8 @@
 ﻿using CD_in_Core.Application.Services.Interfaces;
-using CD_in_Core.Domain.Models;
-using CD_in_Core.Domain.Models.Replacement;
+using CD_in_Core.Application.Settings;
+using CD_in_Core.Application.Settings.Input;
 using CD_in_Core.Domain.Models.Sequences;
+using CD_in_Core.Domain.Select;
 using CD_in_Core.Infrastructure.FileServices.Interfaces;
 using CD_in_Core.Infrastructure.FileServices.Writer;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,18 +34,18 @@ namespace CD_in_Core.Application.Services
             _logger = logger;
         }
 
-        public async Task ProcessFiles(ProcessingOption option, Action<double> progressCallback, CancellationToken token)
+        public async Task ProcessDirectory(ProcessingOption option, Action<double> progressCallback, CancellationToken token)
         {
-            if (option == null)
+            if (option.InputSource is not DirectoryInputSourceSettings directorySettings)
                 return;
 
-            if (string.IsNullOrWhiteSpace(option.FolderPath))
+            if (string.IsNullOrWhiteSpace(directorySettings.FolderPath))
                 throw new ArgumentException("Please set FolderPath");
 
-            if (string.IsNullOrWhiteSpace(option.InputFilesType))
+            if (string.IsNullOrWhiteSpace(directorySettings.InputFilesType))
                 throw new ArgumentException("Please set InputFilesType");
 
-            var inputFilesPaths = Directory.GetFiles(option.FolderPath, option.InputFilesType);
+            var inputFilesPaths = Directory.GetFiles(directorySettings.FolderPath, directorySettings.InputFilesType);
             var fileCount = inputFilesPaths.Count();
             var sequenceWriter = _serviceProvider.GetRequiredService<ISequenceWriter>();
 
@@ -111,15 +112,15 @@ namespace CD_in_Core.Application.Services
             }
         }
 
-        private ISequence ProccesSequenceForOption(ISequence sequence, IOptions extractionOption)
+        private ISequence ProccesSequenceForOption(ISequence sequence, IExtraction extractionOption)
         {
             switch (extractionOption)
             {
-                case LargeNumberExtractionOptions extractionOptions:
+                case LargeNumberExtraction extractionOptions:
                     return _largeNumberExtractionService.ExtractLargeNumbers(sequence, extractionOptions);
-                case ValueTransformationOptions valueTransformationOptions:
+                case ValueTransformation valueTransformationOptions:
                     return _beneficialReplacementService.PerformBeneficialReplacement(sequence, valueTransformationOptions);
-                case SubSequenceExtractionOptions extractionOptions:
+                case SubSequenceExtraction extractionOptions:
                     return _sequenceExtractorService.ExstractSequence(sequence, extractionOptions);
                 default:
                     throw new NotImplementedException(extractionOption.GetType().Name);

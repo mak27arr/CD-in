@@ -1,4 +1,4 @@
-﻿using CD_in_Core.Domain.Models.DeltaIndex;
+﻿using CD_in_Core.Application.Settings.DeltaIndex;
 using CD_in_Core.Domain.Models.Sequences;
 
 namespace CD_in_Core.Application.Services.Interfaces

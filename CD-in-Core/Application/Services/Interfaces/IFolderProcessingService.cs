@@ -1,4 +1,4 @@
-﻿using CD_in_Core.Domain.Models;
+﻿using CD_in_Core.Application.Settings;
 
 namespace CD_in_Core.Application.Services.Interfaces
 {

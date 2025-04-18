@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Xunit;
 using CD_in_Core.Infrastructure.FileServices.Writer;
 using CD_in_Core.Domain.Models.Sequences;
+using CD_in_Core.Application.Settings;
 
 public class SequenceWriterTests
 {

@@ -1,5 +1,5 @@
-﻿using CD_in_Core.Application.Services.Interfaces;
-using CD_in_Core.Domain.Models;
+﻿using CD_in_Core.Application.Settings;
+using CD_in_Core.Application.Services.Interfaces;
 
 namespace CD_in_Core.Application.Services
 {
@@ -14,7 +14,7 @@ namespace CD_in_Core.Application.Services
 
         public async Task ProcessFolderAsync(ProcessingOption option, Action<double> progressCallback, CancellationToken cancellationToken)
         {
-            await _mainProcessingService.ProcessFiles(option, progressCallback, cancellationToken);
+            await _mainProcessingService.ProcessDirectory(option, progressCallback, cancellationToken);
         }
     }
 }

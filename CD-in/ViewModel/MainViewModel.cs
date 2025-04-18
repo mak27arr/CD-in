@@ -1,9 +1,4 @@
 ﻿using CD_in_Core.Application.Services.Interfaces;
-using CD_in_Core.Domain.Models.DeltaIndex;
-using CD_in_Core.Domain.Models.Replacement;
-using CD_in_Core.Domain.Models.Sequences;
-using CD_in_Core.Domain.Models.Spec;
-using CD_in_Core.Domain.Models;
 using CommunityToolkit.Mvvm.Input;
 using System.IO;
 using System.Windows.Threading;
@@ -11,7 +6,11 @@ using System.Diagnostics;
 using CD_in.ViewModel;
 using System.Windows;
 using Microsoft.Extensions.Logging;
-using System.Windows.Controls;
+using CD_in_Core.Application.Settings;
+using CD_in_Core.Application.Settings.DeltaIndex;
+using CD_in_Core.Application.Settings.Input;
+using CD_in_Core.Domain.Conditions;
+using CD_in_Core.Domain.Select;
 
 namespace CD_in
 {
@@ -121,21 +120,23 @@ namespace CD_in
 
             var option = new ProcessingOption()
             {
-                FolderPath = CDInFolderPath,
+                InputSource = new DirectoryInputSourceSettings() { 
+                    FolderPath = CDInFolderPath,
+                    InputFilesType = "*.txt"
+                },
                 DeltaParam = new DeltaIndexParams()
                 {
                     BlockSize = BlockSize,
                 },
-                ExtractionOptions = new List<ExtractionOptions>(),
-                InputFilesType = "*.txt"
+                ExtractionOptions = new List<ExtractionSettings>()
             };
 
             if (IsMergeChecked)
             {
-                option.ExtractionOptions.Add(new ExtractionOptions()
+                option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = MergeOrderExecution,
-                    SelectOption = new SubSequenceExtractionOptions()
+                    SelectOption = new SubSequenceExtraction()
                     {
                         Condition = new EqualsCondition(1),
                         MinSequenceLength = MergeOrderLength
@@ -150,10 +151,10 @@ namespace CD_in
 
             if (IsMergeSecondChecked)
             {
-                option.ExtractionOptions.Add(new ExtractionOptions()
+                option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = MergeSecondOrderExecution,
-                    SelectOption = new SubSequenceExtractionOptions()
+                    SelectOption = new SubSequenceExtraction()
                     {
                         Condition = new EqualsCondition(2),
                         MinSequenceLength = MergeSecondOrderLength
@@ -168,10 +169,10 @@ namespace CD_in
 
             if (IsReplaceChecked)
             {
-                option.ExtractionOptions.Add(new ExtractionOptions()
+                option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = ReplaceOrderExecution,
-                    SelectOption = new ValueTransformationOptions()
+                    SelectOption = new ValueTransformation()
                     {
                         Specification = new ReplaceSingleTwosWithOnesSpecification(),
                         ReplacementStrategy = new ConstantTransformer(1)
@@ -186,10 +187,10 @@ namespace CD_in
 
             if (IsLargerChecked)
             {
-                option.ExtractionOptions.Add(new ExtractionOptions()
+                option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = LargerOrderExecution,
-                    SelectOption = new LargeNumberExtractionOptions()
+                    SelectOption = new LargeNumberExtraction()
                     {
                         Condition = new GreaterOrEqualThanCondition(LargerNumberValue)
                     },

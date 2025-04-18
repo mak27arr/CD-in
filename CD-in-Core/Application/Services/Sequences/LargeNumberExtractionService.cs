@@ -1,7 +1,7 @@
 ﻿using CD_in_Core.Application.Pool;
 using CD_in_Core.Application.Services.Interfaces;
-using CD_in_Core.Domain.Models;
 using CD_in_Core.Domain.Models.Sequences;
+using CD_in_Core.Domain.Select;
 
 namespace CD_in_Core.Application.Services.Sequences
 {
@@ -14,13 +14,13 @@ namespace CD_in_Core.Application.Services.Sequences
             _pool = pool;
         }
 
-        public ISequence ExtractLargeNumbers(ISequence sequence, LargeNumberExtractionOptions options)
+        public ISequence ExtractLargeNumbers(ISequence sequence, LargeNumberExtraction options)
         {
             var resultSequence = _pool.Get();
 
             foreach (var element in sequence)
             {
-                if (options.Condition.IsSatisfiedBy(element.Value))
+                if (options.Condition.IsSatisfiedBy(element))
                     resultSequence.Add(element);
             }
 

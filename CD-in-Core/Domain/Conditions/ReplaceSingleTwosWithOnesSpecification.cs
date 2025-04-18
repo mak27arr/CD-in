@@ -1,7 +1,6 @@
 ﻿using CD_in_Core.Domain.Models.Sequences;
-using CD_in_Core.Domain.Models.Specification;
 
-namespace CD_in_Core.Domain.Models.Replacement
+namespace CD_in_Core.Domain.Conditions
 {
     public class ReplaceSingleTwosWithOnesSpecification : ISequenceCondition<IElement>
     {
@@ -23,8 +22,8 @@ namespace CD_in_Core.Domain.Models.Replacement
 
         private bool IsIsolated(IElement element)
         {
-            return (_sequence.GetPrevious(element).Value != _searchValue)
-                && (_sequence.GetNext(element).Value != _searchValue);
+            return _sequence.GetPrevious(element).Value != _searchValue
+                && _sequence.GetNext(element).Value != _searchValue;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace CD_in_Core.Domain.Models.DeltaIndex
+﻿namespace CD_in_Core.Application.Settings.DeltaIndex
 {
     public class DeltaIndexParams
     {

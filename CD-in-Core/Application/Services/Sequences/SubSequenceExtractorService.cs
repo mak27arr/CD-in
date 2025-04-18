@@ -1,6 +1,7 @@
 ﻿using CD_in_Core.Application.Pool;
 using CD_in_Core.Application.Services.Interfaces;
 using CD_in_Core.Domain.Models.Sequences;
+using CD_in_Core.Domain.Select;
 
 namespace CD_in_Core.Application.Services.Sequences
 {
@@ -14,14 +15,14 @@ namespace CD_in_Core.Application.Services.Sequences
             _pool = pool;
         }
 
-        public ISequence ExstractSequence(ISequence sequence, SubSequenceExtractionOptions options)
+        public ISequence ExstractSequence(ISequence sequence, SubSequenceExtraction options)
         {
             var resultSequence = _pool.Get();
             _currentSequence.Clear();
 
             foreach (var element in sequence)
             {
-                if (options.Condition.IsSatisfiedBy(element.Value))
+                if (options.Condition.IsSatisfiedBy(element))
                 {
                     _currentSequence.Add(element);
                 }
@@ -37,7 +38,7 @@ namespace CD_in_Core.Application.Services.Sequences
             return resultSequence;
         }
 
-        private void CopySubSequenceToResult(SubSequenceExtractionOptions options, IPooledSequence resultSequence)
+        private void CopySubSequenceToResult(SubSequenceExtraction options, IPooledSequence resultSequence)
         {
             if (_currentSequence.Count >= options.MinSequenceLength)
             {

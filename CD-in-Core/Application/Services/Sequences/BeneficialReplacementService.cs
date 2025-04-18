@@ -1,7 +1,7 @@
 ﻿using CD_in_Core.Application.Pool;
 using CD_in_Core.Application.Services.Interfaces;
-using CD_in_Core.Domain.Models.Replacement;
 using CD_in_Core.Domain.Models.Sequences;
+using CD_in_Core.Domain.Select;
 
 namespace CD_in_Core.Application.Services.Sequences
 {
@@ -14,7 +14,7 @@ namespace CD_in_Core.Application.Services.Sequences
             _pool = pool;
         }
 
-        public ISequence PerformBeneficialReplacement(ISequence sequence, ValueTransformationOptions options)
+        public ISequence PerformBeneficialReplacement(ISequence sequence, ValueTransformation options)
         {
             var modified = _pool.Get();
             modified.SetPool(_pool);
@@ -25,7 +25,7 @@ namespace CD_in_Core.Application.Services.Sequences
             {
                 if (options.Specification.IsSatisfiedBy(element))
                 {
-                    modified.Add(element.Key, options.ReplacementStrategy.Transform(element.Value));
+                    modified.Add(options.ReplacementStrategy.Transform(element));
                 }
                 else
                 {
