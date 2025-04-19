@@ -5,7 +5,7 @@ using CD_in_Core.Domain.Select;
 
 namespace CD_in_Core.Application.Services.Sequences
 {
-    internal class LargeNumberExtractionService : ILargeNumberExtractionService
+    internal class LargeNumberExtractionService : INumberExtractionService
     {
         private readonly ISequencePool _pool;
 
@@ -14,7 +14,7 @@ namespace CD_in_Core.Application.Services.Sequences
             _pool = pool;
         }
 
-        public ISequence ExtractLargeNumbers(ISequence sequence, NumberExtractionRule options)
+        public ISequence Extract(ISequence sequence, SelectNumberRule options)
         {
             var resultSequence = _pool.Get();
 

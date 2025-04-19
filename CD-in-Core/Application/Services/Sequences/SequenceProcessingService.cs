@@ -10,16 +10,16 @@ namespace CD_in_Core.Application.Services.Sequences
 {
     internal class SequenceProcessingService : ISequenceProcessingService
     {
-        private readonly ILargeNumberExtractionService _largeNumberExtractionService;
-        private readonly IBeneficialReplacementService _beneficialReplacementService;
+        private readonly INumberExtractionService _numberExtractionService;
+        private readonly IReplacementService _beneficialReplacementService;
         private readonly ISubSequenceExtractorService _sequenceExtractorService;
 
         public SequenceProcessingService(
-            ILargeNumberExtractionService largeNumberExtractionService,
-            IBeneficialReplacementService beneficialReplacementService,
+            INumberExtractionService largeNumberExtractionService,
+            IReplacementService beneficialReplacementService,
             ISubSequenceExtractorService sequenceExtractorService)
         {
-            _largeNumberExtractionService = largeNumberExtractionService;
+            _numberExtractionService = largeNumberExtractionService;
             _beneficialReplacementService = beneficialReplacementService;
             _sequenceExtractorService = sequenceExtractorService;
         }
@@ -54,12 +54,12 @@ namespace CD_in_Core.Application.Services.Sequences
         {
             switch (extractionOption)
             {
-                case NumberExtractionRule extractionOptions:
-                    return _largeNumberExtractionService.ExtractLargeNumbers(sequence, extractionOptions);
+                case SelectNumberRule extractionOptions:
+                    return _numberExtractionService.Extract(sequence, extractionOptions);
                 case ValueTransformationRule valueTransformationOptions:
-                    return _beneficialReplacementService.PerformBeneficialReplacement(sequence, valueTransformationOptions);
+                    return _beneficialReplacementService.PerformReplacement(sequence, valueTransformationOptions);
                 case SubSequenceExtractionRule extractionOptions:
-                    return _sequenceExtractorService.ExstractSequence(sequence, extractionOptions);
+                    return _sequenceExtractorService.ExstractSubSequence(sequence, extractionOptions);
                 case RawSequenceExtractionRules extractionRules:
                     return sequence;
                 default:

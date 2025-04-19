@@ -9,10 +9,10 @@ namespace CD_in_Core.Domain.Models.Sequences
 
         void Add(int key, int value);
 
-        void Clear();
-
         IElement GetNext(IElement item);
 
         IElement GetPrevious(IElement item);
+
+        void Clear();
     }
 }

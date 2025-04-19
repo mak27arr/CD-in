@@ -3,8 +3,8 @@ using CD_in_Core.Domain.Select;
 
 namespace CD_in_Core.Application.Services.Interfaces.Sequences
 {
-    internal interface ILargeNumberExtractionService
+    internal interface INumberExtractionService
     {
-        ISequence ExtractLargeNumbers(ISequence sequence, NumberExtractionRule options);
+        ISequence Extract(ISequence sequence, SelectNumberRule options);
     }
 }

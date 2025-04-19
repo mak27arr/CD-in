@@ -3,8 +3,8 @@ using CD_in_Core.Domain.Select;
 
 namespace CD_in_Core.Application.Services.Interfaces.Sequences
 {
-    internal interface IBeneficialReplacementService
+    internal interface IReplacementService
     {
-        ISequence PerformBeneficialReplacement(ISequence sequence, ValueTransformationRule options);
+        ISequence PerformReplacement(ISequence sequence, ValueTransformationRule options);
     }
 }

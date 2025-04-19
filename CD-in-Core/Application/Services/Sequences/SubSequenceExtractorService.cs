@@ -15,7 +15,7 @@ namespace CD_in_Core.Application.Services.Sequences
             _pool = pool;
         }
 
-        public ISequence ExstractSequence(ISequence sequence, SubSequenceExtractionRule options)
+        public ISequence ExstractSubSequence(ISequence sequence, SubSequenceExtractionRule options)
         {
             var resultSequence = _pool.Get();
             _currentSequence.Clear();

@@ -5,7 +5,7 @@ using CD_in_Core.Domain.Select;
 
 namespace CD_in_Core.Application.Services.Sequences
 {
-    internal class BeneficialReplacementService : IBeneficialReplacementService
+    internal class BeneficialReplacementService : IReplacementService
     {
         private readonly ISequencePool _pool;
 
@@ -14,7 +14,7 @@ namespace CD_in_Core.Application.Services.Sequences
             _pool = pool;
         }
 
-        public ISequence PerformBeneficialReplacement(ISequence sequence, ValueTransformationRule options)
+        public ISequence PerformReplacement(ISequence sequence, ValueTransformationRule options)
         {
             var modified = _pool.Get();
             modified.SetPool(_pool);
