@@ -21,15 +21,18 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             _onesIndexesAndDeltas.Clear();
             _zerosIndexesAndDeltas.Clear();
 
-            for (int i = 0; i < digits.Count; i++)
+            if (digits.Data != null)
             {
-                if (digits.Data[i] == 0)
+                for (int i = 0; i < digits.Count; i++)
                 {
-                    _zerosIndexesAndDeltas.Add(i);
-                }
-                else if (digits.Data[i] == 1)
-                {
-                    _onesIndexesAndDeltas.Add(i);
+                    if (digits.Data[i] == 0)
+                    {
+                        _zerosIndexesAndDeltas.Add(i);
+                    }
+                    else if (digits.Data[i] == 1)
+                    {
+                        _onesIndexesAndDeltas.Add(i);
+                    }
                 }
             }
 
@@ -50,10 +53,11 @@ namespace CD_in_Core.Application.Services.DeltaIndex
 
         public ISequence CalculateDelta(List<int> indexesAndDeltas)
         {
-            if (indexesAndDeltas is null or { Count: 0 })
-                return default;
-
             var sequence = _pool.Get();
+
+            if (indexesAndDeltas is null or { Count: 0 })
+                return sequence;
+
             sequence.Add(indexesAndDeltas[0], indexesAndDeltas[0]);
 
             for (int i = 1; i < indexesAndDeltas.Count; i++)

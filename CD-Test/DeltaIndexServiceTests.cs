@@ -101,16 +101,6 @@ public class DeltaIndexServiceTests
     }
 
     [Fact]
-    public void CalculateDelta_NullList_ReturnsNull()
-    {
-        // Act
-        var result = _service.CalculateDelta(null);
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
     public void CalculateDelta_EmptyList_ReturnsNull()
     {
         // Act

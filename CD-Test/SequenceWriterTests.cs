@@ -6,6 +6,7 @@ using CD_in_Core.Infrastructure.FileServices.Writer;
 using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Application.Settings;
 using CD_in_Core.Infrastructure;
+using CD_in_Core.Application;
 
 public class SequenceWriterTests
 {
@@ -43,8 +44,8 @@ public class SequenceWriterTests
         var request = new WriteRequest
         {
             Sequence = sequence,
-            SourceFileName = "file1.txt",
-            SaveTo = new SaveToTextFileSettings { FilePath = "C:\\temp", FileName = "output" }
+            SourceName = "file1.txt",
+            SaveTo = new SaveToTextFileParam { FilePath = "C:\\temp", FileName = "output" }
         };
 
         // Act
@@ -72,8 +73,8 @@ public class SequenceWriterTests
         var request = new WriteRequest
         {
             Sequence = sequence,
-            SourceFileName = "file1",
-            SaveTo = new SaveToTextFileSettings
+            SourceName = "file1",
+            SaveTo = new SaveToTextFileParam
             {
                 FilePath = _tempDirectory,
                 FileName = "output"

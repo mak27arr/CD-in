@@ -11,6 +11,7 @@ using CD_in_Core.Application.Settings.DeltaIndex;
 using CD_in_Core.Application.Settings.Input;
 using CD_in_Core.Domain.Conditions;
 using CD_in_Core.Domain.Select;
+using CD_in_Core.Application;
 
 namespace CD_in
 {
@@ -141,7 +142,7 @@ namespace CD_in
                         Condition = new EqualsCondition(1),
                         MinSequenceLength = MergeOrderLength
                     },
-                    SaveOptions = new SaveToTextFileSettings()
+                    SaveOptions = new SaveToTextFileParam()
                     {
                         FileName = "Обєднання 1",
                         FilePath = saveFolder
@@ -159,7 +160,7 @@ namespace CD_in
                         Condition = new EqualsCondition(2),
                         MinSequenceLength = MergeSecondOrderLength
                     },
-                    SaveOptions = new SaveToTextFileSettings()
+                    SaveOptions = new SaveToTextFileParam()
                     {
                         FileName = "Обєднання 2",
                         FilePath = saveFolder
@@ -177,7 +178,7 @@ namespace CD_in
                         Specification = new ReplaceSingleTwosWithOnesSpecification(),
                         ReplacementStrategy = new ConstantTransformer(1)
                     },
-                    SaveOptions = new SaveToTextFileSettings()
+                    SaveOptions = new SaveToTextFileParam()
                     {
                         FileName = "Заміна",
                         FilePath = saveFolder
@@ -194,7 +195,7 @@ namespace CD_in
                     {
                         Condition = new GreaterOrEqualThanCondition(LargerNumberValue)
                     },
-                    SaveOptions = new SaveToTextFileSettings()
+                    SaveOptions = new SaveToTextFileParam()
                     {
                         FileName = "Виніс великих",
                         FilePath = saveFolder

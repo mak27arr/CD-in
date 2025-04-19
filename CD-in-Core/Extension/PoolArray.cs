@@ -6,7 +6,7 @@ namespace CD_in_Core.Extension
     public class PoolArray<T> : IEnumerable<T>
     {
         private readonly ObjectPool<T[]> _pool;
-        private T[] _array;
+        private T[]? _array;
         private int _index;
 
         internal PoolArray(ObjectPool<T[]> pool)
@@ -15,7 +15,7 @@ namespace CD_in_Core.Extension
             _array = _pool.Get();
         }
 
-        public T[] Data => _array;
+        public T[]? Data => _array;
 
         public int Count => _index;
 
@@ -50,7 +50,9 @@ namespace CD_in_Core.Extension
 
         internal void Copy(byte[] block, int index)
         {
-            Array.Copy(block, Data, index);
+            if (Data != null)
+                Array.Copy(block, Data, index);
+
             _index = index;
         }
     }

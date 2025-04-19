@@ -19,17 +19,15 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
             _fileBufferSize = configuration.GetValue<int>("SequenceReaderSettings:FileBufferSize", 8192);
         }
 
-        public async IAsyncEnumerable<PoolArray<byte>> ReadDigitsInBlocksAsync(
-            string filePath,
-            int blockSize,
+        public async IAsyncEnumerable<PoolArray<byte>> ReadDigitsInBlocksAsync(TextFileSourceParam fileSourceParam, 
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var blockCurrentindex = 0;
-            var block = new byte[blockSize];
+            var block = new byte[fileSourceParam.BlockSize];
             var fileReadBuffer = new char[_fileBufferSize];
-            var arrayPool = CreateArrayPool(blockSize);
+            var arrayPool = CreateArrayPool(fileSourceParam.BlockSize);
 
-            using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: _fileBufferSize, useAsync: true);
+            using var stream = new FileStream(fileSourceParam.Path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: _fileBufferSize, useAsync: true);
             using var reader = new StreamReader(stream);
 
             while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested)
@@ -43,7 +41,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
                     {
                         blockCurrentindex = AddToBlockIfValid(block, blockCurrentindex, namberChar);
 
-                        if (blockCurrentindex >= blockSize)
+                        if (blockCurrentindex >= fileSourceParam.BlockSize)
                         {
                             yield return CloneToArrayFromPool(arrayPool, block, blockCurrentindex);
                             blockCurrentindex = 0;

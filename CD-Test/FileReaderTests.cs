@@ -3,7 +3,6 @@ using CD_in_Core.Infrastructure.FileServices.Reader;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.Linq;
 using Xunit;
 
 namespace CD_Test
@@ -42,18 +41,22 @@ namespace CD_Test
             var filePath = CreateTempFile(lines);
             var reader = new FileReader(_configuration, _loggerMock.Object);
             var resultBlocks = new List<PoolArray<byte>>();
-
+            var readParam = new TextFileSourceParam()
+            {
+                Path = filePath,
+                BlockSize = blockSize
+            };
             // Act
-            await foreach (var block in reader.ReadDigitsInBlocksAsync(filePath, blockSize))
+            await foreach (var block in reader.ReadDigitsInBlocksAsync(readParam))
             {
                 resultBlocks.Add(block);
             }
 
             // Assert
             Assert.Equal(3, resultBlocks.Count);
-            Assert.Equal(new byte[] { 0, 1, 0 }, resultBlocks[0].Data.Take(resultBlocks[0].Count));
-            Assert.Equal(new byte[] { 1, 0, 1 }, resultBlocks[1].Data.Take(resultBlocks[1].Count));
-            Assert.Equal(new byte[] { 0 }, resultBlocks[2].Data.Take(resultBlocks[2].Count));
+            Assert.Equal(new byte[] { 0, 1, 0 }, resultBlocks[0].Data?.Take(resultBlocks[0].Count));
+            Assert.Equal(new byte[] { 1, 0, 1 }, resultBlocks[1].Data?.Take(resultBlocks[1].Count));
+            Assert.Equal(new byte[] { 0 }, resultBlocks[2].Data?.Take(resultBlocks[2].Count));
         }
 
         [Fact]
@@ -63,11 +66,15 @@ namespace CD_Test
             var lines = new[] { "0", "1", "x", "1" };
             var filePath = CreateTempFile(lines);
             var reader = new FileReader(_configuration, _loggerMock.Object);
-
+            var readParam = new TextFileSourceParam()
+            {
+                Path = filePath,
+                BlockSize = 2
+            };
             // Act & Assert
             var ex = await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
-                await foreach (var _ in reader.ReadDigitsInBlocksAsync(filePath, blockSize: 2)) { }
+                await foreach (var _ in reader.ReadDigitsInBlocksAsync(readParam)) { }
             });
 
             Assert.Contains("illegal char", ex.Message);

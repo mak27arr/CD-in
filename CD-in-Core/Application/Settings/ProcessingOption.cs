@@ -5,7 +5,7 @@ namespace CD_in_Core.Application.Settings
 {
     public class ProcessingOption
     {
-        public required InputSourceSettings InputSource { get; set; }
+        public required IInputSourceSettings InputSource { get; set; }
 
         public required DeltaIndexParams DeltaParam { get; set; }
 

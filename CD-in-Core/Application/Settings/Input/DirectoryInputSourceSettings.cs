@@ -1,9 +1,9 @@
 ﻿namespace CD_in_Core.Application.Settings.Input
 {
-    public class DirectoryInputSourceSettings : InputSourceSettings
+    public class DirectoryInputSourceSettings : IInputSourceSettings
     {
-        public string FolderPath { get; set; }
+        public required string FolderPath { get; set; }
 
-        public string InputFilesType { get; set; }
+        public required string InputFilesType { get; set; }
     }
 }

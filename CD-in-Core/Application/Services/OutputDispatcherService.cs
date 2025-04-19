@@ -17,7 +17,7 @@ namespace CD_in_Core.Application.Services
         {
             switch (writeRequest.SaveTo)
             {
-                case SaveToTextFileSettings:
+                case SaveToTextFileParam:
                     await _fileSequenceWriter.AppendSequenceAsync(writeRequest, token);
                     break;
                 default:

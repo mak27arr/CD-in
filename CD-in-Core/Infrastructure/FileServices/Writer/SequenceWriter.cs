@@ -50,17 +50,21 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
             {
                 try
                 {
-                    await AppendSequenceAsync(request.Sequence, request.SourceFileName, request.SaveTo as SaveToTextFileSettings, token);
+                    if (request.SaveTo is SaveToTextFileParam saveToTextFileSettings)
+                        await AppendSequenceAsync(request.Sequence, request.SourceName, saveToTextFileSettings, token);
+                    else
+                        throw new ArgumentException($"Not suported : {request.SaveTo?.GetType().Name}");
+
                     request.OnWriteComplete?.Invoke(request.Sequence);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error saving file: {0}", (request?.SaveTo as SaveToTextFileSettings)?.FileName);
+                    _logger.LogError(ex, "Error saving file: {0}", (request?.SaveTo as SaveToTextFileParam)?.FileName);
                 }
             }
         }
 
-        private async Task AppendSequenceAsync(ISequence sequence, string sourceFileName, SaveToTextFileSettings options, CancellationToken cancellationToken = default)
+        private async Task AppendSequenceAsync(ISequence sequence, string sourceFileName, SaveToTextFileParam options, CancellationToken cancellationToken = default)
         {
             string fullName = GetDestFilePath(sourceFileName, options);
 
@@ -93,7 +97,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
             }
         }
 
-        private static string GetDestFilePath(string sourceFileName, SaveToTextFileSettings options)
+        private static string GetDestFilePath(string sourceFileName, SaveToTextFileParam options)
         {
             var fileName = $"{options.FileName}-{sourceFileName}.txt";
             var fullName = Path.Combine(options.FilePath, fileName);

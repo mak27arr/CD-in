@@ -1,19 +1,19 @@
-﻿using CD_in_Core.Application.Settings.DeltaIndex;
-using CD_in_Core.Application.Services.Interfaces;
+﻿using CD_in_Core.Application.Services.Interfaces;
 using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Infrastructure.FileServices.Interfaces;
+using CD_in_Core.Infrastructure.FileServices.Reader;
 using System.Runtime.CompilerServices;
 
 namespace CD_in_Core.Application.Services.DeltaIndex
 {
-    internal class DeltaIndexProcessorService : IDeltaIndexProcessorService
+    internal class DeltaIndexTextFileReader : IDeltaIndexTextFileReader
     {
         private readonly IDeltaIndexService _deltaIndexService;
         private readonly IFileReader _fileReader;
         private IFileReadProgressTracker _fileReadProgressTracker;
 
 
-        public DeltaIndexProcessorService(IDeltaIndexService deltaIndexService, 
+        public DeltaIndexTextFileReader(IDeltaIndexService deltaIndexService, 
             IFileReader fileReader,
             IFileReadProgressTracker fileReadProgressTracker)
         {
@@ -22,15 +22,14 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             _fileReadProgressTracker = fileReadProgressTracker;
         }
 
-        public async IAsyncEnumerable<IElement> ProcessFile(string filePath, 
-            DeltaIndexParams parameters,
+        public async IAsyncEnumerable<IElement> ProcessFile(TextFileSourceParam fileSourceParam,
             Action<double> progressCallback,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             int globalOffset = 0;
 
-            _fileReadProgressTracker.Initialize(filePath);
-            await using var enumerator = _fileReader.ReadDigitsInBlocksAsync(filePath, parameters.BlockSize, cancellationToken).GetAsyncEnumerator(cancellationToken);
+            _fileReadProgressTracker.Initialize(fileSourceParam.Path);
+            await using var enumerator = _fileReader.ReadDigitsInBlocksAsync(fileSourceParam, cancellationToken).GetAsyncEnumerator(cancellationToken);
 
             if (!await enumerator.MoveNextAsync())
                 yield break;

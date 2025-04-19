@@ -1,7 +1,7 @@
 ﻿using CD_in_Core.Infrastructure.FileServices.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace CD_in_Core.Infrastructure.FileServices
+namespace CD_in_Core.Infrastructure.FileServices.Reader
 {
     internal class BinaryLineCountEstimator : ILineCountEstimator
     {

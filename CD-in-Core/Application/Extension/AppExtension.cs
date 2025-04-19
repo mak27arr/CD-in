@@ -16,7 +16,7 @@ namespace CD_in_Core.Application.Extension
         {
             service.RegisterAppInfrastructureServices();
             service.AddTransient<IDeltaIndexService, DeltaIndexService>();
-            service.AddTransient<IDeltaIndexProcessorService, DeltaIndexProcessorService>();
+            service.AddTransient<IDeltaIndexTextFileReader, DeltaIndexTextFileReader>();
             service.AddTransient<ILargeNumberExtractionService, LargeNumberExtractionService>();
             service.AddTransient<IBeneficialReplacementService, BeneficialReplacementService>();
             service.AddTransient<ISubSequenceExtractorService, SubSequenceExtractorService>();
@@ -24,6 +24,7 @@ namespace CD_in_Core.Application.Extension
             service.AddTransient<IDirectoryProcessingService, DirectoryProcessingService>();
             service.AddTransient<IMainProcessingService, MainProcessingService>();
             service.AddTransient<IOutputDispatcherService, OutputDispatcherService>();
+            service.AddTransient<IInputDispatcherService, InputDispatcherService>();
             service.AddSingleton<ISequencePool>(provider =>
             {
                 var poolProvider = new DefaultObjectPoolProvider();

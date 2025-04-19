@@ -22,8 +22,8 @@ namespace CD_in_Core.Domain.Conditions
 
         private bool IsIsolated(IElement element)
         {
-            return _sequence.GetPrevious(element).Value != _searchValue
-                && _sequence.GetNext(element).Value != _searchValue;
+            return _sequence?.GetPrevious(element).Value != _searchValue
+                && _sequence?.GetNext(element).Value != _searchValue;
         }
     }
 }

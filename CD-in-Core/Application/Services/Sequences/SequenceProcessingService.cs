@@ -22,7 +22,7 @@ namespace CD_in_Core.Application.Services.Sequences
             _sequenceExtractorService = sequenceExtractorService;
         }
 
-        public async Task ProccesInputSequence(ProcessingOption option, IOutputDispatcherService sequenceWriter, string inputName, ISequence sequence, CancellationToken token)
+        public async Task ProccesInputSequence(ISequence sequence, ProcessingOption option, IOutputDispatcherService sequenceWriter, string inputName, CancellationToken token)
         {
             var tasks = option.ExtractionOptions.Select(async extractionOption =>
             {
@@ -33,14 +33,14 @@ namespace CD_in_Core.Application.Services.Sequences
             await Task.WhenAll(tasks);
         }
 
-        private async Task SaveResult(IOutputDispatcherService sequenceWriter, ISequence sequence, string sourceName, SaveToTextFileSettings saveOptions, CancellationToken token)
+        private async Task SaveResult(IOutputDispatcherService sequenceWriter, ISequence sequence, string sourceName, SaveToTextFileParam saveOptions, CancellationToken token)
         {
             if (saveOptions != null)
             {
                 var request = new WriteRequest()
                 {
                     Sequence = sequence,
-                    SourceFileName = sourceName,
+                    SourceName = sourceName,
                     SaveTo = saveOptions,
                     OnWriteComplete = (s) => { (s as IPooledSequence)?.Release(); }
                 };

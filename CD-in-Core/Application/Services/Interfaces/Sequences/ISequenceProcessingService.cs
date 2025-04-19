@@ -5,6 +5,6 @@ namespace CD_in_Core.Application.Services.Interfaces.Sequences
 {
     internal interface ISequenceProcessingService
     {
-        Task ProccesInputSequence(ProcessingOption option, IOutputDispatcherService sequenceWriter, string inputName, ISequence sequence, CancellationToken token);
+        Task ProccesInputSequence(ISequence sequence, ProcessingOption option, IOutputDispatcherService outputDispatcher, string inputName, CancellationToken token);
     }
 }
