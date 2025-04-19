@@ -6,7 +6,7 @@ namespace CD_in_Core.Application.Settings
     {
         public int ExecutionOrder { get; init; }
 
-        public required IExtraction SelectOption { get; set; }
+        public required IExtractionRule SelectOption { get; set; }
 
         public required SaveToTextFileParam SaveOptions {get; set;}
     }

@@ -3,7 +3,7 @@ using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Infrastructure.FileServices.Interfaces;
 using CD_in_Core.Infrastructure.FileServices.Reader;
 
-namespace CD_in_Core.Application.Services
+namespace CD_in_Core.Application.Services.IO
 {
     internal class InputDispatcherService : IInputDispatcherService
     {

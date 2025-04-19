@@ -15,7 +15,7 @@ namespace CD_in_Core.Application.Services.Sequences
             _pool = pool;
         }
 
-        public ISequence ExstractSequence(ISequence sequence, SubSequenceExtraction options)
+        public ISequence ExstractSequence(ISequence sequence, SubSequenceExtractionRule options)
         {
             var resultSequence = _pool.Get();
             _currentSequence.Clear();
@@ -38,7 +38,7 @@ namespace CD_in_Core.Application.Services.Sequences
             return resultSequence;
         }
 
-        private void CopySubSequenceToResult(SubSequenceExtraction options, IPooledSequence resultSequence)
+        private void CopySubSequenceToResult(SubSequenceExtractionRule options, IPooledSequence resultSequence)
         {
             if (_currentSequence.Count >= options.MinSequenceLength)
             {

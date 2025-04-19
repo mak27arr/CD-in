@@ -14,7 +14,7 @@ namespace CD_in_Core.Application.Services.Sequences
             _pool = pool;
         }
 
-        public ISequence ExtractLargeNumbers(ISequence sequence, LargeNumberExtraction options)
+        public ISequence ExtractLargeNumbers(ISequence sequence, NumberExtractionRule options)
         {
             var resultSequence = _pool.Get();
 

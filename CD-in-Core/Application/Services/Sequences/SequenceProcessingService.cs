@@ -1,7 +1,9 @@
 ﻿using CD_in_Core.Application.Services.Interfaces.Sequences;
+using CD_in_Core.Application.Services.IO;
 using CD_in_Core.Application.Settings;
 using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Domain.Select;
+using CD_in_Core.Domain.ValueObjects;
 using CD_in_Core.Infrastructure;
 
 namespace CD_in_Core.Application.Services.Sequences
@@ -48,18 +50,20 @@ namespace CD_in_Core.Application.Services.Sequences
             }
         }
 
-        private ISequence ProccesSequenceForOption(ISequence sequence, IExtraction extractionOption)
+        private ISequence ProccesSequenceForOption(ISequence sequence, IExtractionRule extractionOption)
         {
             switch (extractionOption)
             {
-                case LargeNumberExtraction extractionOptions:
+                case NumberExtractionRule extractionOptions:
                     return _largeNumberExtractionService.ExtractLargeNumbers(sequence, extractionOptions);
-                case ValueTransformation valueTransformationOptions:
+                case ValueTransformationRule valueTransformationOptions:
                     return _beneficialReplacementService.PerformBeneficialReplacement(sequence, valueTransformationOptions);
-                case SubSequenceExtraction extractionOptions:
+                case SubSequenceExtractionRule extractionOptions:
                     return _sequenceExtractorService.ExstractSequence(sequence, extractionOptions);
+                case RawSequenceExtractionRules extractionRules:
+                    return sequence;
                 default:
-                    throw new NotImplementedException(extractionOption.GetType().Name);
+                    throw new NotImplementedException($"Cannot process for {extractionOption.GetType().Name}");
             }
         }
     }

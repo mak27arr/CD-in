@@ -2,7 +2,7 @@
 using CD_in_Core.Infrastructure;
 using CD_in_Core.Infrastructure.FileServices.Interfaces;
 
-namespace CD_in_Core.Application.Services
+namespace CD_in_Core.Application.Services.IO
 {
     internal class OutputDispatcherService : IOutputDispatcherService
     {

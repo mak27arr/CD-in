@@ -14,7 +14,7 @@ namespace CD_in_Core.Application.Services.Sequences
             _pool = pool;
         }
 
-        public ISequence PerformBeneficialReplacement(ISequence sequence, ValueTransformation options)
+        public ISequence PerformBeneficialReplacement(ISequence sequence, ValueTransformationRule options)
         {
             var modified = _pool.Get();
             modified.SetPool(_pool);

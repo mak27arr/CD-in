@@ -1,6 +1,6 @@
 ﻿namespace CD_in_Core.Domain.Select
 {
-    public class BaseExtraction : IExtraction
+    public class BaseExtractionRule : IExtractionRule
     {
         public int ExecutionOrder { get; init; }
     }

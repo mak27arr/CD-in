@@ -11,7 +11,7 @@ using CD_in_Core.Application.Settings.DeltaIndex;
 using CD_in_Core.Application.Settings.Input;
 using CD_in_Core.Domain.Conditions;
 using CD_in_Core.Domain.Select;
-using CD_in_Core.Application;
+using CD_in_Core.Domain.ValueObjects;
 
 namespace CD_in
 {
@@ -137,7 +137,7 @@ namespace CD_in
                 option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = MergeOrderExecution,
-                    SelectOption = new SubSequenceExtraction()
+                    SelectOption = new SubSequenceExtractionRule()
                     {
                         Condition = new EqualsCondition(1),
                         MinSequenceLength = MergeOrderLength
@@ -155,7 +155,7 @@ namespace CD_in
                 option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = MergeSecondOrderExecution,
-                    SelectOption = new SubSequenceExtraction()
+                    SelectOption = new SubSequenceExtractionRule()
                     {
                         Condition = new EqualsCondition(2),
                         MinSequenceLength = MergeSecondOrderLength
@@ -173,7 +173,7 @@ namespace CD_in
                 option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = ReplaceOrderExecution,
-                    SelectOption = new ValueTransformation()
+                    SelectOption = new ValueTransformationRule()
                     {
                         Specification = new ReplaceSingleTwosWithOnesSpecification(),
                         ReplacementStrategy = new ConstantTransformer(1)
@@ -191,7 +191,7 @@ namespace CD_in
                 option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = LargerOrderExecution,
-                    SelectOption = new LargeNumberExtraction()
+                    SelectOption = new NumberExtractionRule()
                     {
                         Condition = new GreaterOrEqualThanCondition(LargerNumberValue)
                     },

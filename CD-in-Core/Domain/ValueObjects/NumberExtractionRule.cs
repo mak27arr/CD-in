@@ -3,8 +3,8 @@ using CD_in_Core.Domain.Models.Sequences;
 
 namespace CD_in_Core.Domain.Select
 {
-    public class LargeNumberExtraction : BaseExtraction
+    public class NumberExtractionRule : BaseExtractionRule
     {
-        public IValueCondition<IElement> Condition { get; set; } = default!;
+        public required IValueCondition<IElement> Condition { get; set; }
     }
 }
