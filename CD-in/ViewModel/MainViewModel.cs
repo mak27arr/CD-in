@@ -191,13 +191,27 @@ namespace CD_in
                 option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = LargerOrderExecution,
-                    SelectOption = new NumberExtractionRule()
+                    SelectOption = new SelectNumberRule()
                     {
                         Condition = new GreaterOrEqualThanCondition(LargerNumberValue)
                     },
                     SaveOptions = new SaveToTextFileParam()
                     {
                         FileName = "Виніс великих",
+                        FilePath = saveFolder
+                    }
+                });
+            }
+
+            if (!option.ExtractionOptions.Any())
+            {
+                option.ExtractionOptions.Add(new ExtractionSettings()
+                {
+                    ExecutionOrder = LargerOrderExecution,
+                    SelectOption = new RawSequenceExtractionRules(),
+                    SaveOptions = new SaveToTextFileParam()
+                    {
+                        FileName = "Дельта індекси",
                         FilePath = saveFolder
                     }
                 });

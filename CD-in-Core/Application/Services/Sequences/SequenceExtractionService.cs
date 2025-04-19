@@ -5,11 +5,11 @@ using CD_in_Core.Domain.Select;
 
 namespace CD_in_Core.Application.Services.Sequences
 {
-    internal class LargeNumberExtractionService : INumberExtractionService
+    internal class SequenceExtractionService : ISequenceExtractionService
     {
         private readonly ISequencePool _pool;
 
-        public LargeNumberExtractionService(ISequencePool pool)
+        public SequenceExtractionService(ISequencePool pool)
         {
             _pool = pool;
         }
@@ -23,6 +23,16 @@ namespace CD_in_Core.Application.Services.Sequences
                 if (options.Condition.IsSatisfiedBy(element))
                     resultSequence.Add(element);
             }
+
+            return resultSequence;
+        }
+
+        public ISequence CloneSequence(ISequence sequence)
+        {
+            var resultSequence = _pool.Get();
+
+            foreach (var element in sequence)
+                resultSequence.Add(element);
 
             return resultSequence;
         }

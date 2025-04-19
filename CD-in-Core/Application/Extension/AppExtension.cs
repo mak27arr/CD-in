@@ -18,7 +18,7 @@ namespace CD_in_Core.Application.Extension
             service.RegisterAppInfrastructureServices();
             service.AddTransient<IDeltaIndexService, DeltaIndexService>();
             service.AddTransient<IDeltaIndexTextFileReader, DeltaIndexTextFileReader>();
-            service.AddTransient<INumberExtractionService, LargeNumberExtractionService>();
+            service.AddTransient<ISequenceExtractionService, SequenceExtractionService>();
             service.AddTransient<IReplacementService, BeneficialReplacementService>();
             service.AddTransient<ISubSequenceExtractorService, SubSequenceExtractorService>();
             service.AddTransient<ISequenceProcessingService, SequenceProcessingService>();

@@ -10,12 +10,12 @@ namespace CD_in_Core.Application.Services.Sequences
 {
     internal class SequenceProcessingService : ISequenceProcessingService
     {
-        private readonly INumberExtractionService _numberExtractionService;
+        private readonly ISequenceExtractionService _numberExtractionService;
         private readonly IReplacementService _beneficialReplacementService;
         private readonly ISubSequenceExtractorService _sequenceExtractorService;
 
         public SequenceProcessingService(
-            INumberExtractionService largeNumberExtractionService,
+            ISequenceExtractionService largeNumberExtractionService,
             IReplacementService beneficialReplacementService,
             ISubSequenceExtractorService sequenceExtractorService)
         {
@@ -61,7 +61,7 @@ namespace CD_in_Core.Application.Services.Sequences
                 case SubSequenceExtractionRule extractionOptions:
                     return _sequenceExtractorService.ExstractSubSequence(sequence, extractionOptions);
                 case RawSequenceExtractionRules extractionRules:
-                    return sequence;
+                    return _numberExtractionService.CloneSequence(sequence);
                 default:
                     throw new NotImplementedException($"Cannot process for {extractionOption.GetType().Name}");
             }
