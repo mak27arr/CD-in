@@ -23,7 +23,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
 
             if (digits.Data != null)
             {
-                for (int i = 0; i < digits.Count; i++)
+                for (int i = 0; i < digits.LastElementIndex; i++)
                 {
                     if (digits.Data[i] == 0)
                     {

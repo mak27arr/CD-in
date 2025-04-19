@@ -48,7 +48,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
                 }
 
                 (elementsDelta as IPooledSequence)?.Release();
-                globalOffset += currentBlock.Count;
+                globalOffset += currentBlock.LastElementIndex;
 
                 if (progressCallback != null)
                 {

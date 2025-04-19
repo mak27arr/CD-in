@@ -2,7 +2,6 @@
 using CD_in_Core.Infrastructure.FileServices.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.ObjectPool;
 using System.Runtime.CompilerServices;
 
 namespace CD_in_Core.Infrastructure.FileServices.Reader
@@ -11,22 +10,23 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
     {
         private const char zerroChar = '0';
         private readonly int _fileBufferSize;
+        private readonly SinglePoolManager _singlePoolManager;
         private readonly ILogger<FileReader> _logger;
 
-        public FileReader(IConfiguration configuration, ILogger<FileReader> logger)
+        public FileReader(SinglePoolManager singlePoolManager, IConfiguration configuration, ILogger<FileReader> logger)
         {
+            _singlePoolManager = singlePoolManager;
             _logger = logger;
             _fileBufferSize = configuration.GetValue<int>("SequenceReaderSettings:FileBufferSize", 8192);
         }
 
-        public async IAsyncEnumerable<PoolArray<byte>> ReadDigitsInBlocksAsync(TextFileSourceParam fileSourceParam, 
+        public async IAsyncEnumerable<PoolArray<byte>> ReadDigitsInBlocksAsync(TextFileSourceParam fileSourceParam,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var blockCurrentindex = 0;
-            var block = new byte[fileSourceParam.BlockSize];
             var fileReadBuffer = new char[_fileBufferSize];
-            var arrayPool = CreateArrayPool(fileSourceParam.BlockSize);
-
+            var arrayPool = _singlePoolManager.GetOrCreateArrayPool(fileSourceParam.BlockSize);
+            var block = new PoolArray<byte>(arrayPool);
             using var stream = new FileStream(fileSourceParam.Path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: _fileBufferSize, useAsync: true);
             using var reader = new StreamReader(stream);
 
@@ -37,24 +37,25 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
                 for (int i = 0; i < count; i++)
                 {
                     char namberChar = fileReadBuffer[i];
-                    if (namberChar != '\r' && namberChar != '\n')
-                    {
-                        blockCurrentindex = AddToBlockIfValid(block, blockCurrentindex, namberChar);
+                    if (namberChar == '\r' || namberChar == '\n')
+                        continue;
 
-                        if (blockCurrentindex >= fileSourceParam.BlockSize)
-                        {
-                            yield return CloneToArrayFromPool(arrayPool, block, blockCurrentindex);
-                            blockCurrentindex = 0;
-                        }
+                    blockCurrentindex = AddToBlockIfValid(block, blockCurrentindex, namberChar);
+
+                    if (blockCurrentindex >= fileSourceParam.BlockSize)
+                    {
+                        yield return block;
+                        blockCurrentindex = 0;
+                        block = new PoolArray<byte>(arrayPool);
                     }
                 }
             }
 
             if (blockCurrentindex > 0)
-                yield return CloneToArrayFromPool(arrayPool, block, blockCurrentindex);
+                yield return block;
         }
 
-        private int AddToBlockIfValid(byte[] block, int index, char namberChar)
+        private int AddToBlockIfValid(PoolArray<byte> block, int index, char namberChar)
         {
             byte number = (byte)(namberChar - zerroChar);
             if (number >= 0 && number < 10)
@@ -69,19 +70,6 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
             }
 
             return index;
-        }
-
-        private ObjectPool<byte[]> CreateArrayPool(int blockSize)
-        {
-            var poolProvider = new DefaultObjectPoolProvider();
-            return poolProvider.Create(new ArrayPooledObjectPolicy<byte>(blockSize));
-        }
-
-        private static PoolArray<byte> CloneToArrayFromPool(ObjectPool<byte[]> pool, byte[] block, int index)
-        {
-            var result = new PoolArray<byte>(pool);
-            result.Copy(block, index);
-            return result;
         }
     }
 }

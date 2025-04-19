@@ -8,6 +8,7 @@ using CD_in_Core.Application.Pool;
 using Microsoft.Extensions.ObjectPool;
 using CD_in_Core.Application.Services.Interfaces.Sequences;
 using CD_in_Core.Application.Services.IO;
+using CD_in_Core.Extension;
 
 namespace CD_in_Core.Application.Extension
 {
@@ -16,16 +17,17 @@ namespace CD_in_Core.Application.Extension
         public static IServiceCollection RegisterAppServices(this IServiceCollection service)
         {
             service.RegisterAppInfrastructureServices();
-            service.AddTransient<IDeltaIndexService, DeltaIndexService>();
+            service.AddTransient<IMainProcessingService, MainProcessingService>();
+            service.AddTransient<IDirectoryProcessingService, DirectoryProcessingService>();
+            service.AddTransient<IInputDispatcherService, InputDispatcherService>();
             service.AddTransient<IDeltaIndexTextFileReader, DeltaIndexTextFileReader>();
+            service.AddTransient<IDeltaIndexService, DeltaIndexService>();
+            service.AddTransient<ISequenceProcessingService, SequenceProcessingService>();
             service.AddTransient<ISequenceExtractionService, SequenceExtractionService>();
             service.AddTransient<IReplacementService, BeneficialReplacementService>();
             service.AddTransient<ISubSequenceExtractorService, SubSequenceExtractorService>();
-            service.AddTransient<ISequenceProcessingService, SequenceProcessingService>();
-            service.AddTransient<IDirectoryProcessingService, DirectoryProcessingService>();
-            service.AddTransient<IMainProcessingService, MainProcessingService>();
             service.AddTransient<IOutputDispatcherService, OutputDispatcherService>();
-            service.AddTransient<IInputDispatcherService, InputDispatcherService>();
+            service.AddSingleton<SinglePoolManager>();
             service.AddSingleton<ISequencePool>(provider =>
             {
                 var poolProvider = new DefaultObjectPoolProvider();

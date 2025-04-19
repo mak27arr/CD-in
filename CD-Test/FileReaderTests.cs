@@ -54,9 +54,9 @@ namespace CD_Test
 
             // Assert
             Assert.Equal(3, resultBlocks.Count);
-            Assert.Equal(new byte[] { 0, 1, 0 }, resultBlocks[0].Data?.Take(resultBlocks[0].Count));
-            Assert.Equal(new byte[] { 1, 0, 1 }, resultBlocks[1].Data?.Take(resultBlocks[1].Count));
-            Assert.Equal(new byte[] { 0 }, resultBlocks[2].Data?.Take(resultBlocks[2].Count));
+            Assert.Equal(new byte[] { 0, 1, 0 }, resultBlocks[0].Data?.Take(resultBlocks[0].LastElementIndex));
+            Assert.Equal(new byte[] { 1, 0, 1 }, resultBlocks[1].Data?.Take(resultBlocks[1].LastElementIndex));
+            Assert.Equal(new byte[] { 0 }, resultBlocks[2].Data?.Take(resultBlocks[2].LastElementIndex));
         }
 
         [Fact]
