@@ -39,7 +39,7 @@ namespace CD_Test
             var lines = new[] { "0", "1", "0", "1", "0", "1", "0" };
             var blockSize = 3;
             var filePath = CreateTempFile(lines);
-            var reader = new FileReader(_configuration, _loggerMock.Object);
+            var reader = new FileReader(new SinglePoolManager(), _configuration, _loggerMock.Object);
             var resultBlocks = new List<PoolArray<byte>>();
             var readParam = new TextFileSourceParam()
             {
@@ -65,7 +65,7 @@ namespace CD_Test
             // Arrange
             var lines = new[] { "0", "1", "x", "1" };
             var filePath = CreateTempFile(lines);
-            var reader = new FileReader(_configuration, _loggerMock.Object);
+            var reader = new FileReader(new SinglePoolManager(), _configuration, _loggerMock.Object);
             var readParam = new TextFileSourceParam()
             {
                 Path = filePath,

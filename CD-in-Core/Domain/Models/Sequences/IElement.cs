@@ -2,7 +2,7 @@
 {
     public interface IElement
     {
-        int Key { get; set; }
-        int Value { get; set; }
+        int Key { get; }
+        int Value { get; }
     }
 }

@@ -6,7 +6,7 @@ namespace CD_in_Core.Domain.Models.Sequences
     {
         internal Dictionary<int, IElement> _digits;
 
-        public int Count => _digits?.Count ?? 0;
+        public int Count => _digits.Count;
 
         internal Sequence(int size = 1)
         {

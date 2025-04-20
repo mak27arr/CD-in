@@ -5,10 +5,10 @@ namespace CD_in_Core.Extension
     public class PoolArray<T>
     {
         private readonly ObjectPool<T[]> _pool;
-        private T[]? _array;
+        private T[] _array;
         private int _index;
 
-        public T[] Data => _array ?? Array.Empty<T>();
+        public T[] Data => _array;
 
         public int LastElementIndex => _index;
 
@@ -24,7 +24,7 @@ namespace CD_in_Core.Extension
         internal PoolArray(ObjectPool<T[]> pool)
         {
             _pool = pool;
-            _array = _pool.Get();
+            _array = _pool.Get() ?? throw new ApplicationException("Error create array in pool");
         }
 
         public void Release()
