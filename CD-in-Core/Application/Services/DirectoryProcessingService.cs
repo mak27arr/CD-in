@@ -5,7 +5,6 @@ using CD_in_Core.Application.Settings;
 using CD_in_Core.Application.Settings.Input;
 using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Infrastructure.FileServices.Reader;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace CD_in_Core.Application.Services
@@ -14,18 +13,18 @@ namespace CD_in_Core.Application.Services
     {
         private readonly IInputDispatcherService _inputDispatcherService;
         private readonly ISequenceProcessingService _processingService;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IOutputDispatcherFactory _outputDispatcherFactory;
         private readonly ILogger<DirectoryProcessingService> _logger;
 
         public DirectoryProcessingService(IDeltaIndexTextFileReader deltaReader,
             IInputDispatcherService inputDispatcherService,
             ISequenceProcessingService sequenceProcessingService,
-            IServiceProvider serviceProvider,
+            IOutputDispatcherFactory outputDispatcherFactory,
             ILogger<DirectoryProcessingService> logger)
         {
             _inputDispatcherService = inputDispatcherService;
             _processingService = sequenceProcessingService;
-            _serviceProvider = serviceProvider;
+            _outputDispatcherFactory = outputDispatcherFactory;
             _logger = logger;
         }
 
@@ -36,9 +35,7 @@ namespace CD_in_Core.Application.Services
             var fileCount = inputFilesPaths.Length;
             var progressPerFile = 100d / fileCount;
             var sequence = new Sequence(option.DeltaParam.BlockSize);
-
-            using var scope = _serviceProvider.CreateScope();
-            var outputDispatcher = _serviceProvider.GetRequiredService<IOutputDispatcherService>();
+            var outputDispatcher = _outputDispatcherFactory.Create();
 
             for (int fileIndex = 0; fileIndex < inputFilesPaths.Length; fileIndex++)
             {

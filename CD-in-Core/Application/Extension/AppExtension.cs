@@ -26,7 +26,8 @@ namespace CD_in_Core.Application.Extension
             service.AddTransient<ISequenceExtractionService, SequenceExtractionService>();
             service.AddTransient<IReplacementService, BeneficialReplacementService>();
             service.AddTransient<ISubSequenceExtractorService, SubSequenceExtractorService>();
-            service.AddTransient<IOutputDispatcherService, OutputDispatcherService>();
+            service.AddScoped<IOutputDispatcherService, OutputDispatcherService>();
+            service.AddTransient<IOutputDispatcherFactory, OutputDispatcherFactory>();
             service.AddSingleton<SinglePoolManager>();
             service.AddSingleton<ISequencePool>(provider =>
             {
