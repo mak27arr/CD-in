@@ -20,19 +20,17 @@ namespace CD_in_Core.Application.Services.DeltaIndex
         {
             _onesIndexesAndDeltas.Clear();
             _zerosIndexesAndDeltas.Clear();
+            var lastElementIndex = digits.LastElementIndex;
 
-            if (digits.Data != null)
+            for (int i = 0; i < lastElementIndex; i++)
             {
-                for (int i = 0; i < digits.LastElementIndex; i++)
+                if (digits.Data[i] == 0)
                 {
-                    if (digits.Data[i] == 0)
-                    {
-                        _zerosIndexesAndDeltas.Add(i);
-                    }
-                    else if (digits.Data[i] == 1)
-                    {
-                        _onesIndexesAndDeltas.Add(i);
-                    }
+                    _zerosIndexesAndDeltas.Add(i);
+                }
+                else
+                {
+                    _onesIndexesAndDeltas.Add(i);
                 }
             }
 

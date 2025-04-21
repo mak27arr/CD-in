@@ -36,13 +36,13 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
 
                 for (int i = 0; i < count; i++)
                 {
-                    char namberChar = fileReadBuffer[i];
-                    if (namberChar == '\r' || namberChar == '\n')
+                    char numberChar = fileReadBuffer[i];
+                    if (numberChar == '\r' || numberChar == '\n')
                         continue;
 
-                    blockCurrentindex = AddToBlockIfValid(block, blockCurrentindex, namberChar);
+                    blockCurrentindex = AddToBlockIfValid(block, blockCurrentindex, numberChar);
 
-                    if (blockCurrentindex >= fileSourceParam.BlockSize)
+                    if (blockCurrentindex == fileSourceParam.BlockSize)
                     {
                         yield return block;
                         blockCurrentindex = 0;
@@ -56,7 +56,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
         }
 
         private int AddToBlockIfValid(PoolArray<byte> block, int index, char namberChar)
-        {
+            {
             byte number = (byte)(namberChar - zerroChar);
             if (number >= 0 && number < 10)
             {

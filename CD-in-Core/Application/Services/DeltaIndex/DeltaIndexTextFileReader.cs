@@ -40,6 +40,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             while (true)
             {
                 var elementsDelta = _deltaIndexService.ProcessBlock(currentBlock);
+                globalOffset += currentBlock.LastElementIndex;
                 currentBlock.Release();
 
                 foreach (var element in elementsDelta)
@@ -47,16 +48,14 @@ namespace CD_in_Core.Application.Services.DeltaIndex
                     yield return element;
                 }
 
-                (elementsDelta as IPooledSequence)?.Release();
-                globalOffset += currentBlock.LastElementIndex;
+                if (elementsDelta is IPooledSequence pooledSequence)
+                    pooledSequence.Release();
 
-                if (progressCallback != null)
-                {
-                    var progress = _fileReadProgressTracker.GetProgressPercentage(globalOffset);
-                    progressCallback.Invoke(progress);
-                }
+                var progress = _fileReadProgressTracker.GetProgressPercentage(globalOffset);
+                progressCallback(progress);
 
-                if (!await nextBlockTask)
+
+                if (!await nextBlockTask.ConfigureAwait(false))
                     yield break;
 
                 currentBlock = enumerator.Current;
