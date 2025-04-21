@@ -56,6 +56,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             if (indexesAndDeltas is null or { Count: 0 })
                 return sequence;
 
+            sequence.SetCapacity(indexesAndDeltas.Count);
             sequence.Add(indexesAndDeltas[0], indexesAndDeltas[0]);
 
             for (int i = 1; i < indexesAndDeltas.Count; i++)

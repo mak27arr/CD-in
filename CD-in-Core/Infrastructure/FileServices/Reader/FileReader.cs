@@ -23,16 +23,18 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
         public async IAsyncEnumerable<PoolArray<byte>> ReadDigitsInBlocksAsync(TextFileSourceParam fileSourceParam,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
+            var blockSize = fileSourceParam.BlockSize;
             var blockCurrentindex = 0;
             var fileReadBuffer = new char[_fileBufferSize];
-            var arrayPool = _singlePoolManager.GetOrCreateArrayPool(fileSourceParam.BlockSize);
+            var arrayPool = _singlePoolManager.GetOrCreateArrayPool(blockSize);
             var block = new PoolArray<byte>(arrayPool);
+            var count = 0;
             using var stream = new FileStream(fileSourceParam.Path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: _fileBufferSize, useAsync: true);
             using var reader = new StreamReader(stream);
 
             while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested)
             {
-                var count = await reader.ReadAsync(fileReadBuffer, 0, fileReadBuffer.Length);
+                count = await reader.ReadAsync(fileReadBuffer, 0, fileReadBuffer.Length);
 
                 for (int i = 0; i < count; i++)
                 {
@@ -42,7 +44,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
 
                     blockCurrentindex = AddToBlockIfValid(block, blockCurrentindex, numberChar);
 
-                    if (blockCurrentindex == fileSourceParam.BlockSize)
+                    if (blockCurrentindex == blockSize)
                     {
                         yield return block;
                         blockCurrentindex = 0;
@@ -55,12 +57,12 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
                 yield return block;
         }
 
-        private int AddToBlockIfValid(PoolArray<byte> block, int index, char namberChar)
-            {
+        private int AddToBlockIfValid(PoolArray<byte> destination, int index, char namberChar)
+        {
             byte number = (byte)(namberChar - zerroChar);
-            if (number >= 0 && number < 10)
+            if (number >= 0 && number < 2)
             {
-                block[index] = number;
+                destination[index] = number;
                 index++;
             }
             else

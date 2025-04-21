@@ -14,5 +14,7 @@ namespace CD_in_Core.Domain.Models.Sequences
         IElement GetPrevious(IElement item);
 
         void Clear();
+
+        void SetCapacity(int count);
     }
 }

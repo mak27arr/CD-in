@@ -16,7 +16,7 @@ namespace CD_in_Core.Extension
         {
             set
             {
-                Data[index] = value;
+                _array[index] = value;
                 _index = index;
             }
         }

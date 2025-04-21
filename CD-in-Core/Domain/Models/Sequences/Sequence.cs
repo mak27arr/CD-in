@@ -38,6 +38,12 @@ namespace CD_in_Core.Domain.Models.Sequences
             return _digits.TryGetValue(item.Key - 1, out var element) ? element : Element.Default;
         }
 
+
+        public void SetCapacity(int count)
+        {
+            _digits.EnsureCapacity(count);
+        }
+
         #region IEnumerable<Element>
 
         public IEnumerator<IElement> GetEnumerator()
