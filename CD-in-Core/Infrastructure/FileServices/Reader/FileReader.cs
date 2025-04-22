@@ -2,6 +2,7 @@
 using CD_in_Core.Infrastructure.FileServices.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace CD_in_Core.Infrastructure.FileServices.Reader
@@ -25,21 +26,19 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
         {
             var blockSize = fileSourceParam.BlockSize;
             var blockCurrentindex = 0;
-            var fileReadBuffer = new char[_fileBufferSize];
+            var fileReadBuffer = new byte[_fileBufferSize];
             var arrayPool = _singlePoolManager.GetOrCreateArrayPool(blockSize);
             var block = new PoolArray<byte>(arrayPool);
             var count = 0;
             using var stream = new FileStream(fileSourceParam.Path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: _fileBufferSize, useAsync: true);
-            using var reader = new StreamReader(stream);
 
-            while (!reader.EndOfStream && !cancellationToken.IsCancellationRequested)
+            while ((count = await stream.ReadAsync(fileReadBuffer, 0, fileReadBuffer.Length, cancellationToken)) > 0 
+                && !cancellationToken.IsCancellationRequested)
             {
-                count = await reader.ReadAsync(fileReadBuffer, 0, fileReadBuffer.Length);
-
                 for (int i = 0; i < count; i++)
                 {
-                    char numberChar = fileReadBuffer[i];
-                    if (numberChar == '\r' || numberChar == '\n')
+                    var numberChar = fileReadBuffer[i];
+                    if (numberChar == 0x0D || numberChar == 0x0A)
                         continue;
 
                     blockCurrentindex = AddToBlockIfValid(block, blockCurrentindex, numberChar);
@@ -57,9 +56,9 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
                 yield return block;
         }
 
-        private int AddToBlockIfValid(PoolArray<byte> destination, int index, char namberChar)
+        private int AddToBlockIfValid(PoolArray<byte> destination, int index, byte numberChar)
         {
-            byte number = (byte)(namberChar - zerroChar);
+            byte number = (byte)(numberChar - zerroChar);
             if (number >= 0 && number < 2)
             {
                 destination[index] = number;
@@ -67,8 +66,8 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
             }
             else
             {
-                _logger.LogError("File contains illegal char: {0} symbol: {1}", namberChar, namberChar.ToString());
-                throw new ArgumentException($"File contains illegal char: {namberChar}");
+                _logger.LogError("File contains illegal char: {0}", numberChar);
+                throw new ArgumentException($"File contains illegal char: {numberChar}");
             }
 
             return index;
