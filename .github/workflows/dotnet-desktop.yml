@@ -1,44 +1,55 @@
-name: Build and Release
+name: Build and Release WPF App
 
 on:
   push:
     branches:
       - main
     paths:
-      - '**'
-  workflow_dispatch:
+      - '**/*.cs'
+      - '**/*.csproj'
+    # Only run when commit message contains [build]
+    tags-ignore:
+      - '*'
+    # Filter commits
+    # (GitHub doesn't support commit message filtering natively here,
+    # so we use a condition in the job below)
+  workflow_dispatch: # allow manual trigger
 
 jobs:
   build:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[build]')
     runs-on: windows-latest
 
+    env:
+      PROJECT_PATH: CD-in/CD-in.csproj
+      PUBLISH_DIR: publish
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Setup .NET 9 SDK
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.0.x
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
 
-    - name: Restore dependencies
-      run: dotnet restore
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.PROJECT_PATH }}
 
-    - name: Build project
-      run: dotnet build --configuration Release /p:EnableWindowsTargeting=true --no-restore
+      - name: Build project
+        run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release /p:EnableWindowsTargeting=true --no-restore
 
-    - name: Publish project
-      run: dotnet publish -c Release -o publish /p:EnableWindowsTargeting=true
+      - name: Publish project
+        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --output ${{ env.PUBLISH_DIR }} /p:EnableWindowsTargeting=true
 
-    - name: Zip published output
-      run: Compress-Archive -Path publish\* -DestinationPath myapp.zip
+      - name: Create ZIP
+        run: Compress-Archive -Path ${{ env.PUBLISH_DIR }}/* -DestinationPath app.zip
 
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: v${{ github.run_number }}
-        name: Release build ${{ github.run_number }}
-        files: myapp.zip
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Build ${{ github.run_number }}
+          files: app.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
