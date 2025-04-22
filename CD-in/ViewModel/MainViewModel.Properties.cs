@@ -11,7 +11,7 @@ namespace CD_in
         private int _blockSize = 100000;
         private bool _isStatisticsChecked;
         private bool _isWithoutCdOutChecked;
-        private string? _inFolderPath;
+        private string _inFolderPath = string.Empty;
         private bool _isMergeChecked = true;
         private bool _isMergeSecondChecked = true;
         private bool _isReplaceChecked = true;
@@ -84,7 +84,7 @@ namespace CD_in
             }
         }
 
-        public string? CDInFolderPath
+        public string CDInFolderPath
         {
             get => _inFolderPath;
             set

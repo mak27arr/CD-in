@@ -20,25 +20,21 @@ namespace CD_in_Core.Application.Services.DeltaIndex
         {
             _onesIndexesAndDeltas.Clear();
             _zerosIndexesAndDeltas.Clear();
+            var lastElementIndex = digits.LastElementIndex;
 
-            for (int i = 0; i < digits.Count; i++)
+            for (int i = 0; i < lastElementIndex; i++)
             {
                 if (digits.Data[i] == 0)
                 {
                     _zerosIndexesAndDeltas.Add(i);
                 }
-                else if (digits.Data[i] == 1)
+                else
                 {
                     _onesIndexesAndDeltas.Add(i);
                 }
             }
 
             return CalculateTargetDelta();
-        }
-
-        private Element CreateElementForIndex(int index, int value)
-        {
-            return new Element(index, value);
         }
 
         private ISequence CalculateTargetDelta()
@@ -53,13 +49,15 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             }
         }
 
-        public ISequence CalculateDelta(List<int> indexesAndDeltas)
+        internal ISequence CalculateDelta(List<int> indexesAndDeltas)
         {
-            if (indexesAndDeltas is null or { Count: 0 })
-                return default;
-
             var sequence = _pool.Get();
-            sequence.Add(indexesAndDeltas[0], indexesAndDeltas[0]);
+
+            if (indexesAndDeltas is null or { Count: 0 })
+                return sequence;
+
+            sequence.SetCapacity(indexesAndDeltas.Count);
+            sequence.Add(indexesAndDeltas[0], indexesAndDeltas[0] + 1);
 
             for (int i = 1; i < indexesAndDeltas.Count; i++)
             {

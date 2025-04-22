@@ -1,4 +1,5 @@
-﻿using CD_in_Core.Domain.Models.Sequences;
+﻿using CD_in_Core.Application.Settings;
+using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Infrastructure.FileServices.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -15,12 +16,14 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
         private readonly ILogger<SequenceWriter> _logger;
         private readonly int _maxSequenceInMemory;
         private readonly int _stringBufferSize;
+        private readonly int _saveTimeoutMin;
 
         public SequenceWriter(IConfiguration configuration, ILogger<SequenceWriter> logger)
         {
             _logger = logger;
             _maxSequenceInMemory = configuration.GetValue<int>("SequenceWriterSettings:MaxSequenceInMemory", 3);
             _stringBufferSize = configuration.GetValue<int>("SequenceWriterSettings:DiskBufferSize", 4096);
+            _saveTimeoutMin = configuration.GetValue<int>("SequenceWriterSettings:SaveTimeoutMin", 2);
 
             _channel = Channel.CreateBounded<WriteRequest>(new BoundedChannelOptions(_maxSequenceInMemory)
             {
@@ -38,7 +41,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
         public async Task WaitToFinishAsync()
         {
             _channel.Writer.TryComplete();
-            await Task.WhenAny(Task.WhenAll(_writeTask, _channel.Reader.Completion), Task.Delay(TimeSpan.FromMinutes(3)));
+            await Task.WhenAny(Task.WhenAll(_writeTask, _channel.Reader.Completion), Task.Delay(TimeSpan.FromMinutes(_saveTimeoutMin)));
         }
 
         private async Task ConsumeAsync(CancellationToken token)
@@ -47,17 +50,21 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
             {
                 try
                 {
-                    await AppendSequenceAsync(request.Sequence, request.SourceFileName, request.Options, token);
+                    if (request.SaveTo is SaveToTextFileParam saveToTextFileSettings)
+                        await AppendSequenceAsync(request.Sequence, request.SourceName, saveToTextFileSettings, token);
+                    else
+                        throw new ArgumentException($"Not suported : {request.SaveTo?.GetType().Name}");
+
                     request.OnWriteComplete?.Invoke(request.Sequence);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error saving file: {0}", request?.Options?.FileName);
+                    _logger.LogError(ex, "Error saving file: {0}", (request?.SaveTo as SaveToTextFileParam)?.FileName);
                 }
             }
         }
 
-        private async Task AppendSequenceAsync(ISequence sequence, string sourceFileName, SequenceSaveOptions options, CancellationToken cancellationToken = default)
+        private async Task AppendSequenceAsync(ISequence sequence, string sourceFileName, SaveToTextFileParam options, CancellationToken cancellationToken = default)
         {
             string fullName = GetDestFilePath(sourceFileName, options);
 
@@ -90,7 +97,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
             }
         }
 
-        private static string GetDestFilePath(string sourceFileName, SequenceSaveOptions options)
+        private static string GetDestFilePath(string sourceFileName, SaveToTextFileParam options)
         {
             var fileName = $"{options.FileName}-{sourceFileName}.txt";
             var fullName = Path.Combine(options.FilePath, fileName);

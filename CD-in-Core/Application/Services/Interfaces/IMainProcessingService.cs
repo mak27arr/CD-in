@@ -1,9 +1,9 @@
-﻿using CD_in_Core.Domain.Models;
+﻿using CD_in_Core.Application.Settings;
 
 namespace CD_in_Core.Application.Services.Interfaces
 {
-    internal interface IMainProcessingService
+    public interface IMainProcessingService
     {
-        Task ProcessFiles(ProcessingOption option, Action<double> progressCallback, CancellationToken token);
+        Task ProcessAsync(ProcessingOption option, Action<double> progressCallback, CancellationToken cancellationToken);
     }
 }

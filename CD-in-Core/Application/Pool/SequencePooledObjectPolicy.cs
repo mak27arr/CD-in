@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.ObjectPool;
+﻿using CD_in_Core.Domain.Models.Sequences;
+using Microsoft.Extensions.ObjectPool;
 
 namespace CD_in_Core.Application.Pool
 {
-    internal class SequencePooledObjectPolicy : IPooledObjectPolicy<PooledSequence>
+    internal class SequencePooledObjectPolicy : IPooledObjectPolicy<IPooledSequence>
     {
         private readonly int _size;
 
@@ -11,12 +12,12 @@ namespace CD_in_Core.Application.Pool
             _size = size;
         }
 
-        public PooledSequence Create()
+        public IPooledSequence Create()
         {
             return new PooledSequence(_size, null!);
         }
 
-        public bool Return(PooledSequence obj)
+        public bool Return(IPooledSequence obj)
         {
             if (obj == null)
                 return false;

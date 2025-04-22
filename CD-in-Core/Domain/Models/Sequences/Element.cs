@@ -10,7 +10,7 @@
             Value = value;
         }
 
-        public int Key { get; set; }
-        public int Value { get; set; }
+        public int Key { get; }
+        public int Value { get; }
     }
 }

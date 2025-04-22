@@ -6,7 +6,7 @@ namespace CD_in_Core.Domain.Models.Sequences
     {
         internal Dictionary<int, int> _digits;
 
-        public int Count => _digits?.Count ?? 0;
+        public int Count => _digits.Count;
 
         internal Sequence(int size = 1)
         {
@@ -36,6 +36,12 @@ namespace CD_in_Core.Domain.Models.Sequences
         public int GetPrevious(int index)
         {
             return _digits.TryGetValue(index - 1, out var element) ? element : Element.Default.Value;
+        }
+
+
+        public void SetCapacity(int count)
+        {
+            _digits.EnsureCapacity(count);
         }
 
         #region IEnumerable<Element>

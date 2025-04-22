@@ -4,16 +4,16 @@ namespace CD_in_Core.Extension
 {
     public class ArrayPooledObjectPolicy<T> : IPooledObjectPolicy<T[]>
     {
-        private readonly int _size;
+        public int Size { get;  private set; }
 
         public ArrayPooledObjectPolicy(int size)
         {
-            _size = size;
+            Size = size;
         }
 
         public T[] Create()
         {
-            return new T[_size];
+            return new T[Size];
         }
 
         public bool Return(T[] obj)

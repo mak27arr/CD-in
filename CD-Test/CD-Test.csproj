@@ -23,4 +23,13 @@
     <ProjectReference Include="..\CD-in-Core\CD-in-Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestData\Delta\binary_input_1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\Delta\expected_delta_1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

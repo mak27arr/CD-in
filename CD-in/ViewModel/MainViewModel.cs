@@ -1,9 +1,4 @@
 ﻿using CD_in_Core.Application.Services.Interfaces;
-using CD_in_Core.Domain.Models.DeltaIndex;
-using CD_in_Core.Domain.Models.Replacement;
-using CD_in_Core.Domain.Models.Sequences;
-using CD_in_Core.Domain.Models.Spec;
-using CD_in_Core.Domain.Models;
 using CommunityToolkit.Mvvm.Input;
 using System.IO;
 using System.Windows.Threading;
@@ -11,7 +6,12 @@ using System.Diagnostics;
 using CD_in.ViewModel;
 using System.Windows;
 using Microsoft.Extensions.Logging;
-using System.Windows.Controls;
+using CD_in_Core.Application.Settings;
+using CD_in_Core.Application.Settings.DeltaIndex;
+using CD_in_Core.Application.Settings.Input;
+using CD_in_Core.Domain.Conditions;
+using CD_in_Core.Domain.Select;
+using CD_in_Core.Domain.ValueObjects;
 
 namespace CD_in
 {
@@ -20,7 +20,7 @@ namespace CD_in
         private DispatcherTimer _timer;
         private Stopwatch _stopwatch;
         private readonly ILogger<MainViewModel> _logger;
-        private IFolderProcessingService _folderProcessingService;
+        private IMainProcessingService _mainProcessingService;
         private CancellationTokenSource? _tokenSource;
 
         #region ICommand
@@ -31,10 +31,10 @@ namespace CD_in
 
         #endregion
 
-        public MainViewModel(ILogger<MainViewModel> logger, IFolderProcessingService folderProcessingService)
+        public MainViewModel(ILogger<MainViewModel> logger, IMainProcessingService folderProcessingService)
         {
             _logger = logger;
-            _folderProcessingService = folderProcessingService;
+            _mainProcessingService = folderProcessingService;
             _stopwatch = new Stopwatch();
             _timer = new DispatcherTimer
             {
@@ -57,7 +57,7 @@ namespace CD_in
                 _tokenSource = new CancellationTokenSource();
                 ResetAndStartMeasurement();
                 var option = BuildProcessingOption();
-                await Task.Run(() => _folderProcessingService.ProcessFolderAsync(option, UpdateProgress, _tokenSource.Token));
+                await Task.Run(() => _mainProcessingService.ProcessAsync(option, UpdateProgress, _tokenSource.Token));
             }
             catch (Exception ex)
             {
@@ -121,26 +121,28 @@ namespace CD_in
 
             var option = new ProcessingOption()
             {
-                FolderPath = CDInFolderPath,
+                InputSource = new DirectoryInputSourceSettings() { 
+                    FolderPath = CDInFolderPath,
+                    InputFilesType = "*.txt"
+                },
                 DeltaParam = new DeltaIndexParams()
                 {
                     BlockSize = BlockSize,
                 },
-                ExtractionOptions = new List<ExtractionOptions>(),
-                InputFilesType = "*.txt"
+                ExtractionOptions = new List<ExtractionSettings>()
             };
 
             if (IsMergeChecked)
             {
-                option.ExtractionOptions.Add(new ExtractionOptions()
+                option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = MergeOrderExecution,
-                    SelectOption = new SubSequenceExtractionOptions()
+                    SelectOption = new SubSequenceExtractionRule()
                     {
                         Condition = new EqualsCondition(1),
                         MinSequenceLength = MergeOrderLength
                     },
-                    SaveOptions = new SequenceSaveOptions()
+                    SaveOptions = new SaveToTextFileParam()
                     {
                         FileName = "Обєднання 1",
                         FilePath = saveFolder
@@ -150,15 +152,15 @@ namespace CD_in
 
             if (IsMergeSecondChecked)
             {
-                option.ExtractionOptions.Add(new ExtractionOptions()
+                option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = MergeSecondOrderExecution,
-                    SelectOption = new SubSequenceExtractionOptions()
+                    SelectOption = new SubSequenceExtractionRule()
                     {
                         Condition = new EqualsCondition(2),
                         MinSequenceLength = MergeSecondOrderLength
                     },
-                    SaveOptions = new SequenceSaveOptions()
+                    SaveOptions = new SaveToTextFileParam()
                     {
                         FileName = "Обєднання 2",
                         FilePath = saveFolder
@@ -168,15 +170,15 @@ namespace CD_in
 
             if (IsReplaceChecked)
             {
-                option.ExtractionOptions.Add(new ExtractionOptions()
+                option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = ReplaceOrderExecution,
-                    SelectOption = new ValueTransformationOptions()
+                    SelectOption = new ValueTransformationRule()
                     {
                         Specification = new ReplaceSingleTwosWithOnesSpecification(),
                         ReplacementStrategy = new ConstantTransformer(1)
                     },
-                    SaveOptions = new SequenceSaveOptions()
+                    SaveOptions = new SaveToTextFileParam()
                     {
                         FileName = "Заміна",
                         FilePath = saveFolder
@@ -186,16 +188,30 @@ namespace CD_in
 
             if (IsLargerChecked)
             {
-                option.ExtractionOptions.Add(new ExtractionOptions()
+                option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = LargerOrderExecution,
-                    SelectOption = new LargeNumberExtractionOptions()
+                    SelectOption = new SelectNumberRule()
                     {
                         Condition = new GreaterOrEqualThanCondition(LargerNumberValue)
                     },
-                    SaveOptions = new SequenceSaveOptions()
+                    SaveOptions = new SaveToTextFileParam()
                     {
                         FileName = "Виніс великих",
+                        FilePath = saveFolder
+                    }
+                });
+            }
+
+            if (!option.ExtractionOptions.Any())
+            {
+                option.ExtractionOptions.Add(new ExtractionSettings()
+                {
+                    ExecutionOrder = LargerOrderExecution,
+                    SelectOption = new RawSequenceExtractionRules(),
+                    SaveOptions = new SaveToTextFileParam()
+                    {
+                        FileName = "Дельта індекси",
                         FilePath = saveFolder
                     }
                 });
