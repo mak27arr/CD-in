@@ -30,12 +30,16 @@ namespace CD_in_Core.Domain.Models.Sequences
 
         public IElement GetNext(IElement item)
         {
-            return _digits.TryGetValue(item.Key + 1, out var element) ? element : Element.Default;
+            return _digits.TryGetValue(item.Key + 1, out var element) 
+                ? element 
+                : _digits.TryGetValue(_digits.Keys.FirstOrDefault(k => k > item.Key), out var nextValue) ? nextValue : Element.Default;
         }
 
         public IElement GetPrevious(IElement item)
         {
-            return _digits.TryGetValue(item.Key - 1, out var element) ? element : Element.Default;
+            return _digits.TryGetValue(item.Key - 1, out var element) 
+                ? element
+                : _digits.TryGetValue(_digits.Keys.LastOrDefault(k => k < item.Key), out var prvValue) ? prvValue : Element.Default; ;
         }
 
 
