@@ -10,9 +10,8 @@ on:
 
 jobs:
   build:
-    # Run only if manually triggered or commit contains [build]
     if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[build]')
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout code
@@ -27,20 +26,15 @@ jobs:
       run: dotnet restore
 
     - name: Build project
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --configuration Release /p:EnableWindowsTargeting=true --no-restore
 
     - name: Publish project
-      run: dotnet publish -c Release -o publish
+      run: dotnet publish -c Release -o publish /p:EnableWindowsTargeting=true
 
     - name: Zip published output
-      run: |
-        zip -r myapp.zip publish/
+      run: Compress-Archive -Path publish\* -DestinationPath myapp.zip
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: v${{ github.run_number }}
-        name: Release build ${{ github.run_number }}
-        files: myapp.zip
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        tag_name: v${{_
