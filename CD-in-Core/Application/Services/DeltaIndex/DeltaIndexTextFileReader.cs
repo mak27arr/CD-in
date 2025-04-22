@@ -1,4 +1,5 @@
 ﻿using CD_in_Core.Application.Services.Interfaces;
+using CD_in_Core.Application.Settings.DeltaIndex;
 using CD_in_Core.Domain.Models.Sequences;
 using CD_in_Core.Infrastructure.FileServices.Interfaces;
 using CD_in_Core.Infrastructure.FileServices.Reader;
@@ -22,8 +23,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             _fileReadProgressTracker = fileReadProgressTracker;
         }
 
-        public async IAsyncEnumerable<KeyValuePair<int, int>> ProcessFile(string filePath, 
-            DeltaIndexParams parameters,
+        public async IAsyncEnumerable<KeyValuePair<int, int>> ProcessFile(TextFileSourceParam fileSourceParam, 
             Action<double> progressCallback,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {

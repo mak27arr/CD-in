@@ -2,7 +2,7 @@
 
 namespace CD_in_Core.Domain.Conditions
 {
-    public class GreaterOrEqualThanCondition : IValueCondition<IElement>
+    public class GreaterOrEqualThanCondition : IValueCondition<KeyValuePair<int, int>>
     {
         private readonly int _threshold;
 
@@ -11,6 +11,6 @@ namespace CD_in_Core.Domain.Conditions
             _threshold = threshold;
         }
 
-        public bool IsSatisfiedBy(IElement value) => value.Value >= _threshold;
+        public bool IsSatisfiedBy(KeyValuePair<int, int> value) => value.Value >= _threshold;
     }
 }

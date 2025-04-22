@@ -5,8 +5,8 @@ namespace CD_in_Core.Domain.Select
 {
     public class ValueTransformationRule : BaseExtractionRule
     {
-        public required ISequenceCondition<IElement> Specification { get; set; }
+        public required ISequenceCondition<KeyValuePair<int, int>> Specification { get; set; }
 
-        public required IValueTransformer<IElement> ReplacementStrategy { get; set; }
+        public required IValueTransformer<KeyValuePair<int, int>> ReplacementStrategy { get; set; }
     }
 }

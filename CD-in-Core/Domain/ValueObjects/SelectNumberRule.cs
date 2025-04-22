@@ -5,6 +5,6 @@ namespace CD_in_Core.Domain.Select
 {
     public class SelectNumberRule : BaseExtractionRule
     {
-        public required IValueCondition<IElement> Condition { get; set; }
+        public required IValueCondition<KeyValuePair<int, int>> Condition { get; set; }
     }
 }

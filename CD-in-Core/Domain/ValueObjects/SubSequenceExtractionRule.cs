@@ -5,7 +5,7 @@ namespace CD_in_Core.Domain.Select
 {
     public class SubSequenceExtractionRule : BaseExtractionRule
     {
-        public required IValueCondition<IElement> Condition { get; init; }
+        public required IValueCondition<KeyValuePair<int, int>> Condition { get; init; }
 
         public required int MinSequenceLength { get; init; }
     }

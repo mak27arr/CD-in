@@ -13,10 +13,8 @@ namespace CD_in_Core.Domain.Models.Sequences
 
         int GetNext(int index);
 
-
-        void Clear();
+        int GetPrevious(int index);
 
         void SetCapacity(int count);
-        int GetPrevious(int index);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace CD_in_Core.Domain.Conditions
 {
-    public class EqualsCondition : IValueCondition<IElement>
+    public class EqualsCondition : IValueCondition<KeyValuePair<int, int>>
     {
         private readonly int _target;
 
@@ -11,7 +11,7 @@ namespace CD_in_Core.Domain.Conditions
             _target = target;
         }
 
-        public bool IsSatisfiedBy(IElement item)
+        public bool IsSatisfiedBy(KeyValuePair<int, int> item)
         {
             return item.Value == _target;
         }

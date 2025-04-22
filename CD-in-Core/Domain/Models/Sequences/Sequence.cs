@@ -30,12 +30,12 @@ namespace CD_in_Core.Domain.Models.Sequences
 
         public int GetNext(int index)
         {
-            return _digits.TryGetValue(index + 1, out var element) ? element : Element.Default.Value;
+            return _digits.TryGetValue(index + 1, out var element) ? element : -1;
         }
 
         public int GetPrevious(int index)
         {
-            return _digits.TryGetValue(index - 1, out var element) ? element : Element.Default.Value;
+            return _digits.TryGetValue(index - 1, out var element) ? element : -1;
         }
 
 

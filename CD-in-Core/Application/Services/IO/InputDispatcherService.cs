@@ -14,7 +14,7 @@ namespace CD_in_Core.Application.Services.IO
             _fileDeltaReader = fileDeltaReader;
         }
 
-        public IAsyncEnumerable<IElement> GetInputDelta(IInputSourceParam inputSourceParam, Action<double> progress, CancellationToken token = default)
+        public IAsyncEnumerable<KeyValuePair<int, int>> GetInputDelta(IInputSourceParam inputSourceParam, Action<double> progress, CancellationToken token = default)
         {
             switch (inputSourceParam)
             {

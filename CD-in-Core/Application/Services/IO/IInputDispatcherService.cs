@@ -5,6 +5,6 @@ namespace CD_in_Core.Application.Services.IO
 {
     internal interface IInputDispatcherService
     {
-        IAsyncEnumerable<IElement> GetInputDelta(IInputSourceParam inputSourceParam, Action<double> progress, CancellationToken token = default);
+        IAsyncEnumerable<KeyValuePair<int, int>> GetInputDelta(IInputSourceParam inputSourceParam, Action<double> progress, CancellationToken token = default);
     }
 }

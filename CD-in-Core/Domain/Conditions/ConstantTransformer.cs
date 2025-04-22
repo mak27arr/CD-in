@@ -2,7 +2,7 @@
 
 namespace CD_in_Core.Domain.Conditions
 {
-    public class ConstantTransformer : IValueTransformer<IElement>
+    public class ConstantTransformer : IValueTransformer<KeyValuePair<int, int>>
     {
         private readonly int _replacement;
 
@@ -11,9 +11,9 @@ namespace CD_in_Core.Domain.Conditions
             _replacement = replacement;
         }
 
-        public IElement Transform(IElement originalValue)
+        public KeyValuePair<int, int> Transform(KeyValuePair<int, int> originalValue)
         {
-            return new Element(originalValue.Key, _replacement);
+            return new KeyValuePair<int, int>(originalValue.Key, _replacement);
         }
     }
 }
