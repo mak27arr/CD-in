@@ -36,12 +36,10 @@ namespace CD_in_Core.Extension
             }
         }
 
-        internal void Copy(byte[] block, int index)
+        internal void Copy(byte[] block, int length)
         {
-            if (Data != null)
-                Array.Copy(block, Data, index);
-
-            _index = index;
+            Array.Copy(block, Data, length);
+            _index = length;
         }
     }
 }

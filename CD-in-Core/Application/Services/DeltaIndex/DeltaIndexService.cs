@@ -49,7 +49,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
             }
         }
 
-        public ISequence CalculateDelta(List<int> indexesAndDeltas)
+        internal ISequence CalculateDelta(List<int> indexesAndDeltas)
         {
             var sequence = _pool.Get();
 
@@ -57,7 +57,7 @@ namespace CD_in_Core.Application.Services.DeltaIndex
                 return sequence;
 
             sequence.SetCapacity(indexesAndDeltas.Count);
-            sequence.Add(indexesAndDeltas[0], indexesAndDeltas[0]);
+            sequence.Add(indexesAndDeltas[0], indexesAndDeltas[0] + 1);
 
             for (int i = 1; i < indexesAndDeltas.Count; i++)
             {

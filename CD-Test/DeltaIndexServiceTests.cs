@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿namespace CD_Test;
+using Moq;
 using Xunit;
 using Microsoft.Extensions.ObjectPool;
 using CD_in_Core.Application.Pool;
@@ -36,7 +37,7 @@ public class DeltaIndexServiceTests
         var result = _service.ProcessBlock(poolArray);
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(0, result.Count);
         poolArray.Release();
     }
 
@@ -54,7 +55,7 @@ public class DeltaIndexServiceTests
         var result = _service.ProcessBlock(poolArray);
 
         // Assert
-        _sequenceMock.Verify(s => s.Add(1, 1), Times.Once());
+        _sequenceMock.Verify(s => s.Add(1, 2), Times.Once());
         _sequenceMock.Verify(s => s.Add(3, 2), Times.Once());
         Assert.Equal(_sequenceMock.Object, result);
         poolArray.Release();
@@ -74,7 +75,7 @@ public class DeltaIndexServiceTests
         var result = _service.ProcessBlock(poolArray);
 
         // Assert
-        _sequenceMock.Verify(s => s.Add(1, 1), Times.Once());
+        _sequenceMock.Verify(s => s.Add(1, 2), Times.Once());
         _sequenceMock.Verify(s => s.Add(3, 2), Times.Once());
         Assert.Equal(_sequenceMock.Object, result);
         poolArray.Release();
@@ -94,7 +95,7 @@ public class DeltaIndexServiceTests
         var result = _service.ProcessBlock(poolArray);
 
         // Assert
-        _sequenceMock.Verify(s => s.Add(1, 1), Times.Once());
+        _sequenceMock.Verify(s => s.Add(1, 2), Times.Once());
         _sequenceMock.Verify(s => s.Add(3, 2), Times.Once());
         Assert.Equal(_sequenceMock.Object, result);
         poolArray.Release();
@@ -107,7 +108,7 @@ public class DeltaIndexServiceTests
         var result = _service.CalculateDelta(new List<int>());
 
         // Assert
-        Assert.Null(result);
+        Assert.Equal(0, result.Count);
     }
 
     [Fact]
@@ -122,7 +123,7 @@ public class DeltaIndexServiceTests
         var result = _service.CalculateDelta(indexes);
 
         // Assert
-        _sequenceMock.Verify(s => s.Add(5, 5), Times.Once());
+        _sequenceMock.Verify(s => s.Add(5, 6), Times.Once());
         Assert.Equal(_sequenceMock.Object, result);
     }
 
@@ -138,9 +139,36 @@ public class DeltaIndexServiceTests
         var result = _service.CalculateDelta(indexes);
 
         // Assert
-        _sequenceMock.Verify(s => s.Add(1, 1), Times.Once());
+        _sequenceMock.Verify(s => s.Add(1, 2), Times.Once());
         _sequenceMock.Verify(s => s.Add(3, 2), Times.Once());
         _sequenceMock.Verify(s => s.Add(6, 3), Times.Once());
         Assert.Equal(_sequenceMock.Object, result);
+    }
+
+    [Fact]
+    public void ProcessBlock_WithValidBinarySequence_ReturnsExpectedDeltaValues()
+    {
+        _sequencePoolMock.Setup(p => p.Get()).Returns(new PooledSequence(100, _sequencePoolMock.Object));
+
+        // Arrange
+        var inputData = ReadArrayFromFile<byte>("TestData/Delta/binary_input_1.txt");
+        var poolArray = new PoolArray<byte>(_arrayPoolMock.Object);
+        poolArray.Copy(inputData, inputData.Length);
+
+        var expectedDelta = ReadArrayFromFile<int>("TestData/Delta/expected_delta_1.txt");
+
+        // Act
+        var result = _service.ProcessBlock(poolArray);
+        var actualDelta = result.Select(e => e.Value).ToList();
+
+        // Assert
+        Assert.Equal(expectedDelta, actualDelta);
+    }
+
+    private static T[] ReadArrayFromFile<T>(string path) where T : IParsable<T>
+    {
+        return File.ReadAllLines(path)
+                   .Select(line => T.Parse(line, null))
+                   .ToArray();
     }
 }
