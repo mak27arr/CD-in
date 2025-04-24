@@ -7,13 +7,7 @@ on:
     paths:
       - '**/*.cs'
       - '**/*.csproj'
-    # Only run when commit message contains [build]
-    tags-ignore:
-      - '*'
-    # Filter commits
-    # (GitHub doesn't support commit message filtering natively here,
-    # so we use a condition in the job below)
-  workflow_dispatch: # allow manual trigger
+  workflow_dispatch: # Allow manual trigger
 
 jobs:
   build:
