@@ -8,5 +8,7 @@ namespace CD_in_Core.Domain.Select
         public required IValueCondition<IElement> Condition { get; init; }
 
         public required int MinSequenceLength { get; init; }
+
+        public required SubSequenceAction Action { get; init; }
     }
 }

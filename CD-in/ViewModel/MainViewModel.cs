@@ -140,7 +140,8 @@ namespace CD_in
                     SelectOption = new SubSequenceExtractionRule()
                     {
                         Condition = new EqualsCondition(1),
-                        MinSequenceLength = MergeOrderLength
+                        MinSequenceLength = MergeOrderLength,
+                        Action = SubSequenceAction.Count,
                     },
                     SaveOptions = new SaveToTextFileParam()
                     {
@@ -158,7 +159,8 @@ namespace CD_in
                     SelectOption = new SubSequenceExtractionRule()
                     {
                         Condition = new EqualsCondition(2),
-                        MinSequenceLength = MergeSecondOrderLength
+                        MinSequenceLength = MergeSecondOrderLength,
+                        Action = SubSequenceAction.Count
                     },
                     SaveOptions = new SaveToTextFileParam()
                     {

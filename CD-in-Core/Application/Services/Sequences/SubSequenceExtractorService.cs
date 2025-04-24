@@ -40,6 +40,31 @@ namespace CD_in_Core.Application.Services.Sequences
 
         private void CopySubSequenceToResult(SubSequenceExtractionRule options, IPooledSequence resultSequence)
         {
+            switch (options.Action)
+            {
+                case SubSequenceAction.Count:
+                    CountSubSequenceElementAndAdd(options, resultSequence);
+                    break;
+                case SubSequenceAction.Exstract:
+                    ExstractSubSequenceAndAdd(options, resultSequence);
+                    break;
+                default:
+                    throw new NotImplementedException($"SubSequenceAction: {options.Action} not supported action");
+            }
+        }
+
+        private void CountSubSequenceElementAndAdd(SubSequenceExtractionRule options, IPooledSequence resultSequence)
+        {
+            if (_currentSequence.Count >= options.MinSequenceLength)
+            {
+                var key = _currentSequence.FirstOrDefault()?.Key 
+                    ?? throw new Exception("Can't extract subsequence from empty sequence");
+                resultSequence.Add(key, _currentSequence.Count);
+            }
+        }
+
+        private void ExstractSubSequenceAndAdd(SubSequenceExtractionRule options, IPooledSequence resultSequence)
+        {
             if (_currentSequence.Count >= options.MinSequenceLength)
             {
                 foreach (var element in _currentSequence)
