@@ -3,7 +3,7 @@ name: Build and Release WPF App
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - '**/*.cs'
       - '**/*.csproj'
