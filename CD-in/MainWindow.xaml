@@ -60,19 +60,19 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="1" VerticalAlignment="Center">
                     <CheckBox IsChecked="{Binding IsMergeSecondChecked}" Width="20" VerticalAlignment="Center"/>
-                    <Label Content="Об'єднання (1)" Width="120"/>
+                    <Label Content="Об'єднання (2)" Width="120"/>
                     <TextBox Text="{Binding MergeSecondOrderLength, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBoxErrorStyle}" Width="25" PreviewTextInput="NumberValidationTextBox" ToolTip="Довжина послідовності"/>
                     <TextBox Text="{Binding MergeSecondOrderExecution}" Width="25" PreviewTextInput="NumberValidationTextBox" ToolTip="Порядок виконання"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="1" VerticalAlignment="Center">
                     <CheckBox IsChecked="{Binding IsReplaceChecked}" Width="20" VerticalAlignment="Center"/>
-                    <Label Content="Заміна (2)" Width="120"/>
+                    <Label Content="Заміна" Width="120"/>
                     <TextBox Style="{StaticResource TextBoxErrorStyle}" IsEnabled="False" Width="25" PreviewTextInput="NumberValidationTextBox"/>
                     <TextBox Text="{Binding ReplaceOrderExecution}" Width="25" PreviewTextInput="NumberValidationTextBox" ToolTip="Порядок виконання"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="1" VerticalAlignment="Center">
                     <CheckBox IsChecked="{Binding IsLargerChecked}" Width="20" VerticalAlignment="Center"/>
-                    <Label Content="Вибірка більших (3)" Width="120"/>
+                    <Label Content="Вибірка більших" Width="120"/>
                     <TextBox Text="{Binding LargerNumberValue, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBoxErrorStyle}" Width="25" PreviewTextInput="NumberValidationTextBox" ToolTip="Мінімальне значення для виносу"/>
                     <TextBox Text="{Binding LargerOrderExecution}" Width="25" PreviewTextInput="NumberValidationTextBox" ToolTip="Порядок виконання"/>
                 </StackPanel>

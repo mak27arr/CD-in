@@ -26,13 +26,11 @@ namespace CD_in_Core.Application.Services.Sequences
 
         public async Task ProccesInputSequence(ISequence sequence, ProcessingOption option, IOutputDispatcherService sequenceWriter, string inputName, CancellationToken token)
         {
-            var tasks = option.ExtractionOptions.Select(async extractionOption =>
+            foreach (var extractionOption in option.ExtractionOptions.OrderBy(x => x.ExecutionOrder))
             {
                 var result = ProccesSequenceForOption(sequence, extractionOption.SelectOption);
                 await SaveResult(sequenceWriter, result, inputName, extractionOption.SaveOptions, token);
-            });
-
-            await Task.WhenAll(tasks);
+            }
         }
 
         private async Task SaveResult(IOutputDispatcherService sequenceWriter, ISequence sequence, string sourceName, SaveToTextFileParam saveOptions, CancellationToken token)
@@ -61,7 +59,7 @@ namespace CD_in_Core.Application.Services.Sequences
                 case SubSequenceExtractionRule extractionOptions:
                     return _sequenceExtractorService.ExstractSubSequence(sequence, extractionOptions);
                 case RawSequenceExtractionRules extractionRules:
-                    return _numberExtractionService.CloneSequence(sequence);
+                    return _numberExtractionService.CloneSequence(sequence, extractionRules);
                 default:
                     throw new NotImplementedException($"Cannot process for {extractionOption.GetType().Name}");
             }

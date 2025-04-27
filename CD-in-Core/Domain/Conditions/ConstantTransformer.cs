@@ -13,7 +13,7 @@ namespace CD_in_Core.Domain.Conditions
 
         public IElement Transform(IElement originalValue)
         {
-            return new Element(originalValue.Key, _replacement);
+            return new Element(originalValue.Key, originalValue.DisplayKey, _replacement);
         }
     }
 }

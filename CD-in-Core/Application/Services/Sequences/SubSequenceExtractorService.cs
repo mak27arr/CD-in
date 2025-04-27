@@ -5,7 +5,7 @@ using CD_in_Core.Domain.Select;
 
 namespace CD_in_Core.Application.Services.Sequences
 {
-    internal class SubSequenceExtractorService : ISubSequenceExtractorService
+    internal class SubSequenceExtractorService : BaseProcessingService, ISubSequenceExtractorService
     {
         private readonly List<IElement> _currentSequence = new List<IElement>();
         private readonly ISequencePool _pool;
@@ -18,6 +18,7 @@ namespace CD_in_Core.Application.Services.Sequences
         public ISequence ExstractSubSequence(ISequence sequence, SubSequenceExtractionRule options)
         {
             var resultSequence = _pool.Get();
+            var statisfaedSequence = _pool.Get();
             _currentSequence.Clear();
 
             foreach (var element in sequence)
@@ -28,18 +29,28 @@ namespace CD_in_Core.Application.Services.Sequences
                 }
                 else
                 {
-                    CopySubSequenceToResult(options, resultSequence);
+                    if (CopySubSequenceToResult(options, resultSequence))
+                        foreach (var statisfaedElement in _currentSequence)
+                            statisfaedSequence.Add(statisfaedElement.Clone());
+
                     _currentSequence.Clear();
                 }
             }
 
-            CopySubSequenceToResult(options, resultSequence);
+            if (CopySubSequenceToResult(options, resultSequence))
+                foreach (var statisfaedElement in _currentSequence)
+                    statisfaedSequence.Add(statisfaedElement.Clone());
+
+            UpdateSource(sequence, statisfaedSequence, options.RetentionPolicy);
 
             return resultSequence;
         }
 
-        private void CopySubSequenceToResult(SubSequenceExtractionRule options, IPooledSequence resultSequence)
+        private bool CopySubSequenceToResult(SubSequenceExtractionRule options, IPooledSequence resultSequence)
         {
+            if (_currentSequence.Count < options.MinSequenceLength)
+                return false;
+
             switch (options.Action)
             {
                 case SubSequenceAction.Count:
@@ -51,26 +62,22 @@ namespace CD_in_Core.Application.Services.Sequences
                 default:
                     throw new NotImplementedException($"SubSequenceAction: {options.Action} not supported action");
             }
+
+            return true;
         }
 
         private void CountSubSequenceElementAndAdd(SubSequenceExtractionRule options, IPooledSequence resultSequence)
         {
-            if (_currentSequence.Count >= options.MinSequenceLength)
-            {
-                var key = _currentSequence.FirstOrDefault()?.Key 
-                    ?? throw new Exception("Can't extract subsequence from empty sequence");
-                resultSequence.Add(key, _currentSequence.Count);
-            }
+            var element = _currentSequence.FirstOrDefault()
+                ?? throw new Exception("Can't extract subsequence from empty sequence");
+            resultSequence.Add(element.Key, element.DisplayKey, _currentSequence.Count);
         }
 
         private void ExstractSubSequenceAndAdd(SubSequenceExtractionRule options, IPooledSequence resultSequence)
         {
-            if (_currentSequence.Count >= options.MinSequenceLength)
+            foreach (var element in _currentSequence)
             {
-                foreach (var element in _currentSequence)
-                {
-                    resultSequence.Add(element);
-                }
+                resultSequence.Add(element.Clone());
             }
         }
     }

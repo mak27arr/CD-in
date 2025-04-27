@@ -17,19 +17,19 @@ namespace CD_in_Core.Application.Services.Sequences
         public ISequence PerformReplacement(ISequence sequence, ValueTransformationRule options)
         {
             var modified = _pool.Get();
-            modified.SetPool(_pool);
-
             options.Specification.SetSequence(sequence);
 
             foreach (var element in sequence)
             {
                 if (options.Specification.IsSatisfiedBy(element))
                 {
-                    modified.Add(options.ReplacementStrategy.Transform(element));
+                    var newElement = options.ReplacementStrategy.Transform(element);
+                    modified.Add(newElement);
+                    sequence.Add(newElement.Clone());
                 }
                 else
                 {
-                    modified.Add(element);
+                    modified.Add(element.Clone());
                 }
             }
 

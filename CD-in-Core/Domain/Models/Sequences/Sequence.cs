@@ -18,9 +18,20 @@ namespace CD_in_Core.Domain.Models.Sequences
             _digits[element.Key] = element;
         }
 
+        [Obsolete]
         public void Add(int key, int value)
         {
-            _digits[key] = new Element(key, value);
+            Add(key, key, value);
+        }
+
+        public void Add(int key, int displayKey, int value)
+        {
+            _digits[key] = new Element(key, displayKey, value);
+        }
+
+        public void Remove(IElement item)
+        {
+            _digits.Remove(item.Key);
         }
 
         public void Clear()
@@ -42,10 +53,18 @@ namespace CD_in_Core.Domain.Models.Sequences
                 : _digits.TryGetValue(_digits.Keys.LastOrDefault(k => k < item.Key), out var prvValue) ? prvValue : Element.Default; ;
         }
 
-
         public void SetCapacity(int count)
         {
             _digits.EnsureCapacity(count);
+        }
+
+        public void ReindexDisplayKeys()
+        {
+            int index = 1;
+            foreach (var element in _digits.Values)
+            {
+                element.DisplayKey = index++;
+            }
         }
 
         #region IEnumerable<Element>

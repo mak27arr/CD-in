@@ -142,6 +142,7 @@ namespace CD_in
                         Condition = new EqualsCondition(1),
                         MinSequenceLength = MergeOrderLength,
                         Action = SubSequenceAction.Count,
+                        RetentionPolicy = ExtractionRetentionPolicy.Remove
                     },
                     SaveOptions = new SaveToTextFileParam()
                     {
@@ -160,7 +161,8 @@ namespace CD_in
                     {
                         Condition = new EqualsCondition(2),
                         MinSequenceLength = MergeSecondOrderLength,
-                        Action = SubSequenceAction.Count
+                        Action = SubSequenceAction.Count,
+                        RetentionPolicy = ExtractionRetentionPolicy.Remove
                     },
                     SaveOptions = new SaveToTextFileParam()
                     {
@@ -178,7 +180,8 @@ namespace CD_in
                     SelectOption = new ValueTransformationRule()
                     {
                         Specification = new ReplaceSingleTwosWithOnesSpecification(),
-                        ReplacementStrategy = new ConstantTransformer(1)
+                        ReplacementStrategy = new ConstantTransformer(1),
+                        RetentionPolicy = ExtractionRetentionPolicy.Remove
                     },
                     SaveOptions = new SaveToTextFileParam()
                     {
@@ -195,7 +198,8 @@ namespace CD_in
                     ExecutionOrder = LargerOrderExecution,
                     SelectOption = new SelectNumberRule()
                     {
-                        Condition = new GreaterOrEqualThanCondition(LargerNumberValue)
+                        Condition = new GreaterOrEqualThanCondition(LargerNumberValue),
+                        RetentionPolicy = ExtractionRetentionPolicy.Remove
                     },
                     SaveOptions = new SaveToTextFileParam()
                     {
@@ -210,12 +214,15 @@ namespace CD_in
                 option.ExtractionOptions.Add(new ExtractionSettings()
                 {
                     ExecutionOrder = LargerOrderExecution,
-                    SelectOption = new RawSequenceExtractionRules(),
+                    SelectOption = new RawSequenceExtractionRules() 
+                    { 
+                        RetentionPolicy = ExtractionRetentionPolicy.Keep
+                    },
                     SaveOptions = new SaveToTextFileParam()
                     {
                         FileName = "Дельта індекси",
                         FilePath = saveFolder
-                    }
+                    },
                 });
             }
 

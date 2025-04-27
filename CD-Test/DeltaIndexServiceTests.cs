@@ -48,15 +48,15 @@ public class DeltaIndexServiceTests
         var input = new byte[] { 0, 1, 0, 1, 0 };
         var poolArray = new PoolArray<byte>(_arrayPoolMock.Object);
         poolArray.Copy(input, input.Length);
-        _sequenceMock.Setup(s => s.Add(It.IsAny<int>(), It.IsAny<int>()))
-            .Callback<int, int>((index, delta) => { });
+        _sequenceMock.Setup(s => s.Add(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Callback<int, int, int>((index, displayIndex, delta) => { });
 
         // Act
         var result = _service.ProcessBlock(poolArray);
 
         // Assert
-        _sequenceMock.Verify(s => s.Add(1, 2), Times.Once());
-        _sequenceMock.Verify(s => s.Add(3, 2), Times.Once());
+        _sequenceMock.Verify(s => s.Add(1, 1, 2), Times.Once());
+        _sequenceMock.Verify(s => s.Add(3, 2,2), Times.Once());
         Assert.Equal(_sequenceMock.Object, result);
         poolArray.Release();
     }
@@ -68,15 +68,15 @@ public class DeltaIndexServiceTests
         var input = new byte[] { 1, 0, 1, 0, 1 };
         var poolArray = new PoolArray<byte>(_arrayPoolMock.Object);
         poolArray.Copy(input, input.Length);
-        _sequenceMock.Setup(s => s.Add(It.IsAny<int>(), It.IsAny<int>()))
-            .Callback<int, int>((index, delta) => { });
+        _sequenceMock.Setup(s => s.Add(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Callback<int, int, int>((index, displayIndex, delta) => { });
 
         // Act
         var result = _service.ProcessBlock(poolArray);
 
         // Assert
-        _sequenceMock.Verify(s => s.Add(1, 2), Times.Once());
-        _sequenceMock.Verify(s => s.Add(3, 2), Times.Once());
+        _sequenceMock.Verify(s => s.Add(1, 1, 2), Times.Once());
+        _sequenceMock.Verify(s => s.Add(3, 2, 2), Times.Once());
         Assert.Equal(_sequenceMock.Object, result);
         poolArray.Release();
     }
@@ -88,15 +88,15 @@ public class DeltaIndexServiceTests
         var input = new byte[] { 1, 0, 1, 0 };
         var poolArray = new PoolArray<byte>(_arrayPoolMock.Object);
         poolArray.Copy(input, input.Length);
-        _sequenceMock.Setup(s => s.Add(It.IsAny<int>(), It.IsAny<int>()))
-            .Callback<int, int>((index, delta) => { });
+        _sequenceMock.Setup(s => s.Add(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Callback<int, int, int>((index, displayIndex, delta) => { });
 
         // Act
         var result = _service.ProcessBlock(poolArray);
 
         // Assert
-        _sequenceMock.Verify(s => s.Add(1, 2), Times.Once());
-        _sequenceMock.Verify(s => s.Add(3, 2), Times.Once());
+        _sequenceMock.Verify(s => s.Add(1, 1, 2), Times.Once());
+        _sequenceMock.Verify(s => s.Add(3, 2, 2), Times.Once());
         Assert.Equal(_sequenceMock.Object, result);
         poolArray.Release();
     }
@@ -116,14 +116,14 @@ public class DeltaIndexServiceTests
     {
         // Arrange
         var indexes = new List<int> { 5 };
-        _sequenceMock.Setup(s => s.Add(It.IsAny<int>(), It.IsAny<int>()))
-            .Callback<int, int>((index, delta) => { });
+        _sequenceMock.Setup(s => s.Add(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Callback<int, int, int>((index, displayIndex, delta) => { });
 
         // Act
         var result = _service.CalculateDelta(indexes);
 
         // Assert
-        _sequenceMock.Verify(s => s.Add(5, 6), Times.Once());
+        _sequenceMock.Verify(s => s.Add(5, 1, 6), Times.Once());
         Assert.Equal(_sequenceMock.Object, result);
     }
 
@@ -132,16 +132,16 @@ public class DeltaIndexServiceTests
     {
         // Arrange
         var indexes = new List<int> { 1, 3, 6 };
-        _sequenceMock.Setup(s => s.Add(It.IsAny<int>(), It.IsAny<int>()))
-            .Callback<int, int>((index, delta) => { });
+        _sequenceMock.Setup(s => s.Add(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Callback<int, int, int>((index, displayIndex, delta) => { });
 
         // Act
         var result = _service.CalculateDelta(indexes);
 
         // Assert
-        _sequenceMock.Verify(s => s.Add(1, 2), Times.Once());
-        _sequenceMock.Verify(s => s.Add(3, 2), Times.Once());
-        _sequenceMock.Verify(s => s.Add(6, 3), Times.Once());
+        _sequenceMock.Verify(s => s.Add(1, 1, 2), Times.Once());
+        _sequenceMock.Verify(s => s.Add(3, 2, 2), Times.Once());
+        _sequenceMock.Verify(s => s.Add(6, 3, 3), Times.Once());
         Assert.Equal(_sequenceMock.Object, result);
     }
 

@@ -2,6 +2,6 @@
 {
     public interface IExtractionRule
     {
-        
+        ExtractionRetentionPolicy RetentionPolicy { get; init; }
     }
 }

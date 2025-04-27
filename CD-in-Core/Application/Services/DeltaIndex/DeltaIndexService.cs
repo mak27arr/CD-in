@@ -57,12 +57,12 @@ namespace CD_in_Core.Application.Services.DeltaIndex
                 return sequence;
 
             sequence.SetCapacity(indexesAndDeltas.Count);
-            sequence.Add(indexesAndDeltas[0], indexesAndDeltas[0] + 1);
+            sequence.Add(indexesAndDeltas[0], 1, indexesAndDeltas[0] + 1);
 
             for (int i = 1; i < indexesAndDeltas.Count; i++)
             {
                 var previous = indexesAndDeltas[i - 1];
-                sequence.Add(indexesAndDeltas[i], indexesAndDeltas[i] - previous);
+                sequence.Add(indexesAndDeltas[i], i + 1, indexesAndDeltas[i] - previous);
             }
 
             return sequence;
