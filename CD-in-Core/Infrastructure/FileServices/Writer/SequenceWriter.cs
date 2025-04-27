@@ -80,7 +80,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Writer
                 if (cancellationToken.IsCancellationRequested)
                     break;
 
-                contentBuffer.Append(digit.DisplayKey).Append(':').Append(digit.Value).AppendLine();
+                contentBuffer.Append(digit.DisplayKey).Append('\t').Append(digit.Value).AppendLine();
                 counter++;
 
                 if (counter >= batchSize)
