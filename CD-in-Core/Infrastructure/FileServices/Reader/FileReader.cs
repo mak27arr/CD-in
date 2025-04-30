@@ -59,7 +59,7 @@ namespace CD_in_Core.Infrastructure.FileServices.Reader
         private int AddToBlockIfValid(PoolArray<byte> destination, int index, byte numberChar)
         {
             byte number = (byte)(numberChar - zerroChar);
-            if (number >= 0 && number < 2)
+            if (number == 0 && number == 2)
             {
                 destination[index] = number;
                 index++;
